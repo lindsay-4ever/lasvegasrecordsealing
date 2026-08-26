@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REVIEW — Las Vegas Record Sealing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&display=swap">
+
+  <style>
+    /* =============================================
+       REVIEW TOOLBAR
+    ============================================= */
+    #review-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 48px;
+      background: #1a1a2e;
+      border-bottom: 2px solid #c9a84c;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      gap: 1rem;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.82rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
+
+    #review-bar .rb-title {
+      color: #c9a84c;
+      font-weight: bold;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      margin-right: 0.5rem;
+    }
+
+    #review-bar .rb-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255,255,255,0.15);
+      flex-shrink: 0;
+    }
+
+    /* Mode toggle */
+    #review-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      color: #fff;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
+    .toggle-switch {
+      width: 36px;
+      height: 20px;
+      background: #333;
+      border-radius: 10px;
+      position: relative;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: left 0.2s;
+    }
+
+    body.review-active .toggle-switch { background: #c9a84c; }
+    body.review-active .toggle-switch::after { left: 19px; }
+    body.review-active { cursor: crosshair; }
+
+    /* Note type buttons */
+    .type-btns {
+      display: flex;
+      gap: 0.35rem;
+    }
+
+    .type-btn {
+      padding: 0.25rem 0.7rem;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
+      opacity: 0.45;
+      transition: opacity 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .type-btn:hover { opacity: 0.75; }
+    .type-btn.active { opacity: 1; border-color: rgba(255,255,255,0.5); }
+
+    .type-btn[data-type="keep"]   { background: #1e6b3c; color: #fff; }
+    .type-btn[data-type="remove"] { background: #a01c1c; color: #fff; }
+    .type-btn[data-type="add"]    { background: #1a4f7a; color: #fff; }
+    .type-btn[data-type="change"] { background: #8a4e00; color: #fff; }
+
+    /* Action buttons */
+    .rb-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-left: auto;
+    }
+
+    #note-count {
+      color: #c9a84c;
+      font-size: 0.75rem;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .rb-btn {
+      padding: 0.28rem 0.75rem;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: transparent;
+      color: #ccd6e0;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .rb-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .rb-btn.rb-btn-gold { background: #c9a84c; color: #1a1a2e; border-color: #c9a84c; font-weight: bold; }
+    .rb-btn.rb-btn-gold:hover { background: #e8c96a; }
+    .rb-btn.rb-btn-danger { border-color: rgba(180,50,50,0.4); color: #e08080; }
+    .rb-btn.rb-btn-danger:hover { background: rgba(180,50,50,0.2); color: #ff9999; }
+
+    /* =============================================
+       ANNOTATION LAYER
+    ============================================= */
+    #annotation-layer {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      pointer-events: none;
+      z-index: 500;
+    }
+
+    .note-pin {
+      position: absolute;
+      pointer-events: all;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      z-index: 501;
+    }
+
+    .note-dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      transition: transform 0.15s;
+    }
+
+    .note-pin:hover .note-dot { transform: scale(1.2); }
+    .note-pin[data-type="keep"]   .note-dot { background: #2e8b57; }
+    .note-pin[data-type="remove"] .note-dot { background: #c0392b; }
+    .note-pin[data-type="add"]    .note-dot { background: #1a6b9a; }
+    .note-pin[data-type="change"] .note-dot { background: #d35400; }
+
+    /* Note popup */
+    .note-popup {
+      display: none;
+      position: absolute;
+      left: 32px;
+      top: -8px;
+      width: 280px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      padding: 0.9rem;
+      z-index: 502;
+      pointer-events: all;
+    }
+
+    .note-pin.open .note-popup { display: block; }
+
+    /* Flip popup to the left if too close to right edge */
+    .note-pin.flip-left .note-popup {
+      left: auto;
+      right: 32px;
+    }
+
+    .note-popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.6rem;
+    }
+
+    .note-type-badge {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.7rem;
+      font-weight: bold;
+      padding: 0.2rem 0.55rem;
+      border-radius: 3px;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .note-type-badge.keep   { background: #2e8b57; }
+    .note-type-badge.remove { background: #c0392b; }
+    .note-type-badge.add    { background: #1a6b9a; }
+    .note-type-badge.change { background: #d35400; }
+
+    .note-section-tag {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.68rem;
+      color: #888;
+      font-style: italic;
+    }
+
+    .note-popup-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #aaa;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0;
+    }
+
+    .note-popup-close:hover { color: #333; }
+
+    .note-textarea {
+      width: 100%;
+      min-height: 72px;
+      border: 1px solid #e0e4ea;
+      border-radius: 5px;
+      padding: 0.5rem;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.82rem;
+      color: #1a1a2e;
+      resize: vertical;
+      outline: none;
+      margin-bottom: 0.6rem;
+    }
+
+    .note-textarea:focus { border-color: #c9a84c; }
+    .note-textarea::placeholder { color: #bbb; }
+
+    .note-popup-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .note-delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.75rem;
+      color: #c0392b;
+      padding: 0;
+    }
+
+    .note-delete-btn:hover { text-decoration: underline; }
+
+    /* =============================================
+       NOTES PANEL (side drawer)
+    ============================================= */
+    #notes-panel {
+      position: fixed;
+      top: 48px;
+      right: -340px;
+      width: 320px;
+      bottom: 0;
+      background: #fff;
+      border-left: 1px solid #e0e4ea;
+      z-index: 8000;
+      transition: right 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -4px 0 20px rgba(0,0,0,0.12);
+      font-family: 'Arial', sans-serif;
+    }
+
+    #notes-panel.open { right: 0; }
+
+    .panel-header {
+      background: #1a1a2e;
+      color: #c9a84c;
+      padding: 1rem 1.2rem;
+      font-weight: bold;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .panel-close {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    .panel-close:hover { color: #fff; }
+
+    .panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .panel-empty {
+      text-align: center;
+      color: #aaa;
+      font-size: 0.82rem;
+      margin-top: 2rem;
+    }
+
+    .panel-note-item {
+      border-left: 3px solid #ccc;
+      padding: 0.6rem 0.75rem;
+      margin-bottom: 0.75rem;
+      background: #f7f8fa;
+      border-radius: 0 6px 6px 0;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .panel-note-item:hover { background: #eef0f4; }
+    .panel-note-item[data-type="keep"]   { border-color: #2e8b57; }
+    .panel-note-item[data-type="remove"] { border-color: #c0392b; }
+    .panel-note-item[data-type="add"]    { border-color: #1a6b9a; }
+    .panel-note-item[data-type="change"] { border-color: #d35400; }
+
+    .panel-note-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .panel-note-num {
+      font-size: 0.68rem;
+      color: #999;
+    }
+
+    .panel-note-section {
+      font-size: 0.68rem;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    .panel-note-text {
+      font-size: 0.8rem;
+      color: #333;
+      line-height: 1.45;
+    }
+
+    .panel-note-text.empty { color: #bbb; font-style: italic; }
+
+    .panel-footer {
+      padding: 1rem;
+      border-top: 1px solid #e0e4ea;
+      flex-shrink: 0;
+    }
+
+    /* =============================================
+       EXPORT MODAL
+    ============================================= */
+    #export-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 9998;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #export-modal.open { display: flex; }
+
+    .export-box {
+      background: #fff;
+      border-radius: 10px;
+      width: 560px;
+      max-width: 90vw;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    }
+
+    .export-header {
+      background: #1a1a2e;
+      color: #c9a84c;
+      padding: 1rem 1.5rem;
+      font-family: 'Arial', sans-serif;
+      font-weight: bold;
+      font-size: 0.88rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .export-close {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    .export-close:hover { color: #fff; }
+
+    .export-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.2rem 1.5rem;
+    }
+
+    #export-text {
+      width: 100%;
+      min-height: 300px;
+      border: 1px solid #e0e4ea;
+      border-radius: 6px;
+      padding: 0.8rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      color: #1a1a2e;
+      resize: vertical;
+      outline: none;
+      line-height: 1.6;
+    }
+
+    .export-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid #e0e4ea;
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+
+    /* =============================================
+       PAGE LAYOUT ADJUSTMENTS
+    ============================================= */
+    body { padding-top: 48px; } /* push content below review bar */
+
+    /* Push existing fixed nav below review bar */
+    nav { top: 48px !important; }
+
+    /* Compensate hero for extra nav offset */
+    .hero { padding-top: 188px !important; }
+
+    /* Clicking hint overlay when review active */
+    body.review-active .review-hint {
+      display: flex;
+    }
+
+    .review-hint {
+      display: none;
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(13,43,78,0.92);
+      color: #c9a84c;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.78rem;
+      padding: 0.5rem 1.2rem;
+      border-radius: 20px;
+      pointer-events: none;
+      z-index: 8500;
+      letter-spacing: 0.04em;
+    }
+  </style>
+
+  <!-- =============================================
+       ORIGINAL PAGE STYLES (unchanged)
+  ============================================= -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0d2b4e;
+      --gold: #c9a84c;
+      --gold-light: #e8c96a;
+      --light-bg: #f7f8fa;
+      --text: #1a1a2e;
+      --muted: #5a6470;
+      --white: #ffffff;
+      --border: #e0e4ea;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Georgia', serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.7;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--navy);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 68px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    }
+
+    .nav-logo { color: var(--gold); font-size: 1.05rem; font-weight: bold; letter-spacing: 0.02em; text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: #ccd6e0; text-decoration: none; font-family: 'Arial', sans-serif; font-size: 0.88rem; letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--navy) !important; padding: 0.45rem 1.1rem; border-radius: 4px; font-weight: bold !important; }
+    .nav-cta:hover { background: var(--gold-light) !important; }
+
+    .hero { background: linear-gradient(135deg, var(--navy) 60%, #1a4a7a 100%); color: var(--white); padding: 140px 5% 100px; text-align: center; }
+    .hero .section-label { font-family: 'Arial', sans-serif; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.2; margin-bottom: 1.2rem; max-width: 780px; margin-left: auto; margin-right: auto; }
+    .hero p { font-family: 'Arial', sans-serif; font-size: 1.08rem; color: #b8c8d8; max-width: 600px; margin: 0 auto 2.5rem; }
+    .hero-cta-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--gold); color: var(--navy); padding: 0.9rem 2.1rem; border-radius: 5px; font-family: 'Arial', sans-serif; font-weight: bold; font-size: 1rem; text-decoration: none; transition: background 0.2s, transform 0.1s; display: inline-block; }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-secondary { background: transparent; color: var(--white); padding: 0.9rem 2.1rem; border-radius: 5px; font-family: 'Arial', sans-serif; font-weight: bold; font-size: 1rem; text-decoration: none; border: 2px solid rgba(255,255,255,0.35); display: inline-block; }
+    .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+    .hero-trust { margin-top: 2.5rem; font-family: 'Arial', sans-serif; font-size: 0.82rem; color: rgba(255,255,255,0.45); letter-spacing: 0.04em; }
+
+    section { padding: 80px 5%; }
+    .section-inner { max-width: 960px; margin: 0 auto; }
+    .section-label { font-family: 'Arial', sans-serif; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem; }
+    h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); color: var(--navy); margin-bottom: 1rem; line-height: 1.25; }
+
+    .how-it-works { background: var(--white); }
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-top: 2.5rem; }
+    .step-card { background: var(--light-bg); border: 1px solid var(--border); border-top: 3px solid var(--gold); border-radius: 8px; padding: 1.8rem 1.5rem; }
+    .step-number { font-family: 'Arial', sans-serif; font-size: 0.75rem; font-weight: bold; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
+    .step-card h3 { color: var(--navy); font-size: 1.08rem; margin-bottom: 0.6rem; }
+    .step-card p { font-family: 'Arial', sans-serif; font-size: 0.88rem; color: var(--muted); }
+
+    .what-you-get { background: var(--light-bg); border-top: 1px solid var(--border); }
+    .included-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; margin-top: 2rem; }
+    .included-item { display: flex; align-items: flex-start; gap: 0.8rem; font-family: 'Arial', sans-serif; font-size: 0.92rem; color: var(--muted); }
+    .check-icon { color: #2e8b57; flex-shrink: 0; margin-top: 3px; font-size: 1rem; }
+
+    .about { background: var(--white); }
+    .about-inner { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 3.5rem; align-items: start; }
+    .about-sidebar { background: var(--light-bg); border: 1px solid var(--border); border-top: 4px solid var(--gold); border-radius: 8px; padding: 1.8rem; }
+    .about-sidebar .attorney-name { font-size: 1.15rem; color: var(--navy); font-weight: bold; margin-bottom: 0.2rem; }
+    .about-sidebar .attorney-title { font-family: 'Arial', sans-serif; font-size: 0.82rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.2rem; }
+    .credential-list { list-style: none; }
+    .credential-list li { font-family: 'Arial', sans-serif; font-size: 0.82rem; color: var(--muted); padding: 0.4rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 0.5rem; }
+    .credential-list li:last-child { border-bottom: none; }
+    .about-content p { font-family: 'Arial', sans-serif; font-size: 0.95rem; color: var(--muted); margin-bottom: 1.1rem; }
+    .about-content .section-label { margin-bottom: 0.5rem; }
+
+    .faq-teaser { background: var(--light-bg); border-top: 1px solid var(--border); }
+    .faq-items { margin-top: 2rem; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 1.3rem 0; }
+    .faq-item h3 { color: var(--navy); font-size: 1rem; margin-bottom: 0.5rem; }
+    .faq-item p { font-family: 'Arial', sans-serif; font-size: 0.9rem; color: var(--muted); }
+    .faq-link { margin-top: 2rem; font-family: 'Arial', sans-serif; font-size: 0.92rem; }
+    .faq-link a { color: var(--navy); font-weight: bold; text-decoration: none; border-bottom: 2px solid var(--gold); padding-bottom: 1px; }
+
+    .pricing { background: var(--white); }
+    .pricing-card { background: var(--light-bg); border: 1px solid var(--border); border-top: 4px solid var(--gold); border-radius: 10px; padding: 2.5rem; max-width: 680px; margin: 2rem auto 0; }
+    .pricing-card h3 { color: var(--navy); font-size: 1.4rem; margin-bottom: 0.4rem; }
+    .pricing-card .price-note { font-family: 'Arial', sans-serif; font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .pricing-placeholder { font-family: 'Arial', sans-serif; font-size: 0.92rem; color: #b00; font-style: italic; background: #fff5f5; border: 1px dashed #e0a0a0; border-radius: 6px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
+    .pricing-features { list-style: none; margin-top: 1.2rem; }
+    .pricing-features li { font-family: 'Arial', sans-serif; font-size: 0.9rem; color: var(--muted); padding: 0.45rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 0.7rem; }
+    .pricing-features li:last-child { border-bottom: none; }
+
+    .contact { background: linear-gradient(135deg, var(--navy) 60%, #1a4a7a 100%); padding: 80px 5%; color: var(--white); }
+    .contact-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+    .contact h2 { color: var(--white); margin-bottom: 0.8rem; }
+    .contact .section-label { color: var(--gold); }
+    .contact p { font-family: 'Arial', sans-serif; color: #b8c8d8; margin-bottom: 1rem; font-size: 0.98rem; }
+    .form-cta-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 2.5rem; margin-top: 2rem; }
+    .form-cta-box h3 { color: var(--white); font-size: 1.4rem; margin-bottom: 0.8rem; }
+    .form-cta-box p { font-family: 'Arial', sans-serif; font-size: 0.95rem; color: #b8c8d8; margin-bottom: 2rem; }
+    .form-privacy { font-family: 'Arial', sans-serif; font-size: 0.8rem; color: rgba(255,255,255,0.4); margin-top: 1.2rem; }
+    .disclaimer { font-family: 'Arial', sans-serif; font-size: 0.78rem; color: rgba(255,255,255,0.3); margin-top: 2rem; line-height: 1.6; }
+
+    /* FOOTER */
+    footer { background: #070f1a; }
+
+    .footer-main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 64px 5% 56px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 3rem;
+    }
+
+    .footer-brand-name {
+      font-family: 'EB Garamond', 'Georgia', serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 0.01em;
+      margin-bottom: 0.4rem;
+      line-height: 1.3;
+    }
+
+    .footer-founder {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand p {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
+      max-width: 300px;
+      margin-bottom: 1.4rem;
+    }
+
+    .footer-contact { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .footer-contact a {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.88);
+      text-decoration: none;
+      transition: color 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .footer-contact a:hover { color: var(--gold); }
+
+    .footer-col-label {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.1rem;
+      opacity: 0.85;
+    }
+
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+
+    .footer-links a {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.84rem;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.18s;
+      line-height: 1.4;
+    }
+
+    .footer-links a:hover { color: rgba(255,255,255,0.88); }
+
+    .footer-links a.footer-cta {
+      color: var(--gold);
+      font-weight: bold;
+      font-size: 0.82rem;
+      letter-spacing: 0.02em;
+      margin-top: 0.3rem;
+    }
+
+    .footer-links a.footer-cta:hover { color: var(--gold-light); }
+
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.09); }
+
+    .footer-bottom-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-copyright {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.76rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.5;
+    }
+
+    .footer-social a {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.76rem;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.18s;
+    }
+
+    .footer-social a:hover { color: var(--gold); }
+
+    .footer-disclaimer {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 5% 20px;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.25);
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    @media (max-width: 620px) {
+      .footer-main { grid-template-columns: 1fr; padding: 48px 6% 40px; gap: 2rem; }
+      .footer-brand p { max-width: none; }
+      .footer-bottom-inner { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 4%; }
+      .nav-links { display: none; }
+      .about-inner { grid-template-columns: 1fr; gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- =============================================
+     REVIEW BAR
+============================================= -->
+<div id="review-bar">
+  <span class="rb-title">📋 Review Mode</span>
+
+  <div class="rb-divider"></div>
+
+  <label id="review-toggle" title="Toggle review mode on/off">
+    <div class="toggle-switch"></div>
+    <span id="toggle-label">Off</span>
+    <input type="checkbox" id="review-checkbox" style="display:none">
+  </label>
+
+  <div class="rb-divider"></div>
+
+  <div class="type-btns">
+    <button class="type-btn active" data-type="keep">✓ Keep</button>
+    <button class="type-btn" data-type="remove">✗ Remove</button>
+    <button class="type-btn" data-type="add">+ Add</button>
+    <button class="type-btn" data-type="change">✎ Change</button>
+  </div>
+
+  <div class="rb-actions">
+    <span id="note-count">0 notes</span>
+    <button class="rb-btn" id="panel-btn">Show Notes</button>
+    <button class="rb-btn rb-btn-gold" id="export-btn">Export Notes</button>
+    <button class="rb-btn rb-btn-danger" id="clear-btn">Clear All</button>
+  </div>
+</div>
+
+<!-- Hint bar -->
+<div class="review-hint">Click anywhere on the page to drop a note</div>
+
+<!-- =============================================
+     ORIGINAL PAGE CONTENT
+============================================= -->
+<nav>
+  <a href="#" class="nav-logo">Las Vegas Record Sealing</a>
+  <ul class="nav-links">
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#about">Attorney</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact" class="nav-cta">Check Your Eligibility for Free</a></li>
+  </ul>
+</nav>
+
+<section class="hero" data-section="Hero">
+  <p class="section-label">Las Vegas · Clark County · Southern Nevada</p>
+  <h1>Seal Your Nevada Criminal Record. Start Fresh.</h1>
+  <p>We connect Las Vegas residents with experienced Nevada record sealing attorneys who handle the entire process — from eligibility review to court filing — so you can focus on your future, not your past.</p>
+  <div class="hero-cta-group">
+    <a href="#contact" class="btn-primary">Check Your Eligibility for Free →</a>
+    <a href="#how-it-works" class="btn-secondary">See How It Works</a>
+  </div>
+  <p class="hero-trust">Free eligibility check &nbsp;·&nbsp; No obligation &nbsp;·&nbsp; Response within 1 business day</p>
+</section>
+
+
+<section class="how-it-works" id="how-it-works" data-section="How It Works">
+  <div class="section-inner">
+    <p class="section-label">The Process</p>
+    <h2>We Handle Everything — Start to Finish</h2>
+    <p style="font-family:'Arial',sans-serif; color:var(--muted); font-size:0.95rem; max-width:620px;">Sealing a Nevada criminal record involves multiple agencies, court filings, and strict timelines. We manage the entire process so nothing falls through the cracks.</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <p class="step-number">Step 01</p>
+        <h3>Free Eligibility Review</h3>
+        <p>Fill out the free form. We review your criminal history and let you know exactly what can be sealed and what the timeline looks like — at no cost.</p>
+      </div>
+      <div class="step-card">
+        <p class="step-number">Step 02</p>
+        <h3>We Obtain Your Records</h3>
+        <p>We request certified records from the Nevada Department of Public Safety and all relevant Clark County and Nevada courts on your behalf.</p>
+      </div>
+      <div class="step-card">
+        <p class="step-number">Step 03</p>
+        <h3>We File with the Court</h3>
+        <p>Your attorney prepares and files all required legal documents. If a hearing is required, they appear in court so you don't have to.</p>
+      </div>
+      <div class="step-card">
+        <p class="step-number">Step 04</p>
+        <h3>Your Record Is Sealed</h3>
+        <p>After the order is granted, we notify all relevant state agencies. You receive certified copies of the sealing order for your records.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="what-you-get" data-section="What's Included">
+  <div class="section-inner">
+    <p class="section-label">What's Included</p>
+    <h2>Everything Covered Under One Flat Fee</h2>
+    <div class="included-grid">
+      <div class="included-item"><span class="check-icon">✓</span> Full eligibility review of your criminal history</div>
+      <div class="included-item"><span class="check-icon">✓</span> Obtaining certified records from Nevada courts and agencies</div>
+      <div class="included-item"><span class="check-icon">✓</span> Preparation and filing of all legal documents</div>
+      <div class="included-item"><span class="check-icon">✓</span> Court appearances handled by your attorney</div>
+      <div class="included-item"><span class="check-icon">✓</span> Notification to all relevant state agencies after approval</div>
+      <div class="included-item"><span class="check-icon">✓</span> Certified copies of the sealing order</div>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="about" data-section="About the Attorney">
+  <div class="about-inner">
+    <div class="about-sidebar">
+      <p class="attorney-name">Sean P. Sullivan, Esq.</p>
+      <p class="attorney-title">Nevada Criminal Defense Attorney</p>
+      <ul class="credential-list">
+        <li>📍 Las Vegas, Nevada</li>
+        <li>⚖️ Nevada State Bar</li>
+        <li>🏛️ Clark County Bar Association</li>
+        <li>🏛️ Nevada Attorneys for Criminal Justice</li>
+        <li>🏛️ National Association of Criminal Defense Lawyers</li>
+      </ul>
+    </div>
+    <div class="about-content">
+      <p class="section-label">Our Las Vegas Attorney</p>
+      <h2>Sean P. Sullivan Has Been Defending Nevadans for Over 30 Years</h2>
+      <p>Las Vegas Record Sealing partners with experienced, independently licensed Nevada attorneys to handle every case. Our current Las Vegas partner is Sean P. Sullivan, Esq. — a criminal defense attorney with more than three decades of experience in the Nevada court system.</p>
+      <p>He earned his Bachelor of Science in Criminal Justice from the University of Nevada, Reno in 1989 and his Juris Doctor from California School of Law, San Diego in 1993. After serving as managing partner of Kelly & Sullivan, Ltd. from 1994 to 2010, he established his solo practice in Las Vegas in 2011.</p>
+      <p>He is admitted to practice before the Nevada State Bar, the Nevada Supreme Court, and the United States District Court for the District of Nevada, and is a member of the Clark County Bar Association, Nevada Attorneys for Criminal Justice, and the National Association of Criminal Defense Lawyers.</p>
+    </div>
+  </div>
+</section>
+
+<section class="faq-teaser" id="faq" data-section="FAQ">
+  <div class="section-inner">
+    <p class="section-label">Common Questions</p>
+    <h2>What People Ask Before They Start</h2>
+    <div class="faq-items">
+      <div class="faq-item">
+        <h3>What's the difference between record sealing and expungement?</h3>
+        <p>Nevada doesn't have expungement — it has record sealing, which achieves a very similar result. A sealed record is hidden from public view and most background checks, giving you a clean slate for employment and housing.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can I say I have no criminal record after sealing?</h3>
+        <p>In most cases, yes. Nevada law allows you to answer "no" on job applications and housing forms that ask about criminal history, once your record is sealed.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Will my employer find out I'm sealing my record?</h3>
+        <p>No. The process is confidential. Your employer is not notified, and once the record is sealed, it will not appear on standard background checks.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Are there records that can never be sealed?</h3>
+        <p>Yes — felony sexual offenses, felony DUI cases, serious violent crimes, and crimes against children cannot be sealed under Nevada law. Most other offenses are eligible.</p>
+      </div>
+    </div>
+    <p class="faq-link"><a href="#">See all frequently asked questions →</a></p>
+  </div>
+</section>
+
+<section class="pricing" id="pricing" data-section="Pricing">
+  <div class="section-inner">
+    <p class="section-label">Transparent Pricing</p>
+    <h2>Flat-Fee Record Sealing</h2>
+    <div class="pricing-card">
+      <h3>Record Sealing — Flat Fee</h3>
+      <p class="price-note">Price depends on the complexity of your case and the number of records to be sealed.</p>
+      <div class="pricing-placeholder">
+        <strong>Attorney Sullivan needs to fill in pricing.</strong> Recommended: lead with a starting price (e.g. "Record sealing starts at $[amount]") so visitors know what to expect, followed by a note that flexible payment plans are available. Remove this once pricing is confirmed.
+      </div>
+      <ul class="pricing-features">
+        <li><span class="check-icon">✓</span> Full eligibility review included</li>
+        <li><span class="check-icon">✓</span> All court filings and appearances covered</li>
+        <li><span class="check-icon">✓</span> No hidden fees or surprise costs</li>
+        <li><span class="check-icon">✓</span> Payment plans available</li>
+      </ul>
+    </div>
+    <p style="text-align:center; margin-top:1.5rem; font-family:'Arial',sans-serif; font-size:0.9rem;">
+      <a href="#" style="color:var(--navy); font-weight:bold; border-bottom:2px solid var(--gold); text-decoration:none; padding-bottom:1px;">See full pricing details →</a>
+    </p>
+  </div>
+</section>
+
+<section class="contact" id="contact" data-section="Contact / CTA">
+  <div class="contact-inner">
+    <p class="section-label">Get Started</p>
+    <h2>Check Your Eligibility for Free</h2>
+    <p>Fill out the free qualification form and our team will review your situation and get back to you within 1 business day — no obligation, completely free.</p>
+    <div class="form-cta-box">
+      <h3>Free Eligibility Check</h3>
+      <p>Tell us about your record and we'll let you know whether you qualify, what the timeline looks like, and what it would cost.</p>
+      <a href="#" style="display:inline-block; background:var(--navy); color:#fff; padding:1rem 2rem; border-radius:6px; font-family:Arial,sans-serif; font-weight:bold; font-size:1rem; text-decoration:none;">Fill Out the Free Qualification Form →</a>
+      <p class="form-privacy" style="margin-top:1.2rem;">🔒 Your information is kept strictly confidential.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <div class="footer-brand-name">Las Vegas Record Sealing</div>
+      <div class="footer-founder">Founded by Kenneth A. Stover</div>
+      <p>We handle Nevada record sealing so old charges stop costing you opportunities.</p>
+      <div class="footer-contact">
+        <a href="tel:7755021575">☎ (775) 502-1575</a>
+      </div>
+    </div>
+    <div>
+      <p class="footer-col-label">Navigate</p>
+      <ul class="footer-links">
+        <li><a href="index.html#how-it-works">How It Works</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="ken-stover.html">About Ken Stover</a></li>
+        <li><a href="about.html">About Sean Sullivan</a></li>
+        <li><a href="eligibility.html" class="footer-cta">Check Eligibility →</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <p class="footer-copyright">© 2026 Las Vegas Record Sealing. All rights reserved.</p>
+      <div class="footer-social"><a href="https://www.facebook.com/lasvegasrecordsealing" target="_blank" rel="noopener">Facebook</a></div>
+    </div>
+    <p class="footer-disclaimer">The information on this website is for general informational purposes only and does not constitute legal advice. Submitting a form does not create an attorney-client relationship. Results vary based on individual circumstances.</p>
+  </div>
+</footer>
+
+<!-- Annotation layer (notes render here) -->
+<div id="annotation-layer"></div>
+
+<!-- =============================================
+     NOTES PANEL
+============================================= -->
+<div id="notes-panel">
+  <div class="panel-header">
+    <span>Review Notes</span>
+    <button class="panel-close" id="panel-close">✕</button>
+  </div>
+  <div class="panel-body" id="panel-body">
+    <p class="panel-empty">No notes yet. Turn on Review Mode and click anywhere on the page to add notes.</p>
+  </div>
+  <div class="panel-footer">
+    <button class="rb-btn rb-btn-gold" id="panel-export-btn" style="width:100%">Export Notes</button>
+  </div>
+</div>
+
+<!-- =============================================
+     EXPORT MODAL
+============================================= -->
+<div id="export-modal">
+  <div class="export-box">
+    <div class="export-header">
+      <span>Export Review Notes</span>
+      <button class="export-close" id="export-modal-close">✕</button>
+    </div>
+    <div class="export-body">
+      <textarea id="export-text" readonly></textarea>
+    </div>
+    <div class="export-footer">
+      <button class="rb-btn" id="copy-btn">Copy to Clipboard</button>
+      <button class="rb-btn rb-btn-gold" id="export-modal-close2">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- =============================================
+     ANNOTATION JAVASCRIPT
+============================================= -->
+<script>
+  const STORAGE_KEY = 'lv_review_notes';
+  const TYPE_LABELS = { keep: '✓ Keep', remove: '✗ Remove', add: '+ Add', change: '✎ Change' };
+  const TYPE_COLORS = { keep: '#2e8b57', remove: '#c0392b', add: '#1a6b9a', change: '#d35400' };
+
+  let notes = [];
+  let currentType = 'keep';
+  let reviewActive = false;
+  let nextId = 1;
+
+  // ── Load from storage ──
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const data = JSON.parse(saved);
+      notes = data.notes || [];
+      nextId = data.nextId || (notes.length + 1);
+    }
+  } catch(e) {}
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ notes, nextId })); } catch(e) {}
+  }
+
+  // ── Detect section from click target ──
+  function detectSection(el) {
+    let node = el;
+    while (node && node !== document.body) {
+      if (node.dataset && node.dataset.section) return node.dataset.section;
+      node = node.parentElement;
+    }
+    return 'Page';
+  }
+
+  // ── Render a single note pin ──
+  function renderPin(note) {
+    const pin = document.createElement('div');
+    pin.className = 'note-pin';
+    pin.dataset.id = note.id;
+    pin.dataset.type = note.type;
+    pin.style.left = note.x + 'px';
+    pin.style.top  = note.y + 'px';
+
+    pin.innerHTML = `
+      <div class="note-dot">${note.num}</div>
+      <div class="note-popup">
+        <div class="note-popup-header">
+          <span class="note-type-badge ${note.type}">${TYPE_LABELS[note.type]}</span>
+          <span class="note-section-tag">${note.section}</span>
+          <button class="note-popup-close" data-id="${note.id}">✕</button>
+        </div>
+        <textarea class="note-textarea" placeholder="Describe what needs to change…" data-id="${note.id}">${note.text || ''}</textarea>
+        <div class="note-popup-footer">
+          <button class="note-delete-btn" data-id="${note.id}">Delete note</button>
+        </div>
+      </div>`;
+
+    // Flip popup if too close to right edge
+    if (note.x > window.innerWidth - 340) pin.classList.add('flip-left');
+
+    // Click pin to open popup
+    pin.querySelector('.note-dot').addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Close all other popups
+      document.querySelectorAll('.note-pin.open').forEach(p => { if (p !== pin) p.classList.remove('open'); });
+      pin.classList.toggle('open');
+    });
+
+    // Close button on popup
+    pin.querySelector('.note-popup-close').addEventListener('click', (e) => {
+      e.stopPropagation();
+      pin.classList.remove('open');
+    });
+
+    // Text area saves on input
+    pin.querySelector('.note-textarea').addEventListener('input', (e) => {
+      e.stopPropagation();
+      const n = notes.find(n => n.id === note.id);
+      if (n) { n.text = e.target.value; save(); renderPanel(); }
+    });
+
+    pin.querySelector('.note-textarea').addEventListener('click', e => e.stopPropagation());
+
+    // Delete
+    pin.querySelector('.note-delete-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteNote(note.id);
+    });
+
+    document.getElementById('annotation-layer').appendChild(pin);
+  }
+
+  // ── Render all pins ──
+  function renderAllPins() {
+    document.getElementById('annotation-layer').innerHTML = '';
+    notes.forEach(renderPin);
+    updateCount();
+  }
+
+  // ── Render notes panel ──
+  function renderPanel() {
+    const body = document.getElementById('panel-body');
+    if (notes.length === 0) {
+      body.innerHTML = '<p class="panel-empty">No notes yet. Turn on Review Mode and click anywhere on the page to add notes.</p>';
+      return;
+    }
+
+    // Group by type
+    const order = ['keep','remove','add','change'];
+    let html = '';
+    order.forEach(type => {
+      const group = notes.filter(n => n.type === type);
+      if (!group.length) return;
+      html += `<div style="font-family:Arial,sans-serif;font-size:0.7rem;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;color:${TYPE_COLORS[type]};margin:1rem 0 0.4rem;">${TYPE_LABELS[type]} (${group.length})</div>`;
+      group.forEach(n => {
+        html += `<div class="panel-note-item" data-type="${n.type}" data-id="${n.id}">
+          <div class="panel-note-meta">
+            <span class="panel-note-num">#${n.num}</span>
+            <span class="panel-note-section">${n.section}</span>
+          </div>
+          <div class="panel-note-text ${n.text ? '' : 'empty'}">${n.text || '(no note added yet)'}</div>
+        </div>`;
+      });
+    });
+    body.innerHTML = html;
+
+    // Click panel item to scroll to pin and open it
+    body.querySelectorAll('.panel-note-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const id = parseInt(item.dataset.id);
+        const pin = document.querySelector(`.note-pin[data-id="${id}"]`);
+        if (pin) {
+          pin.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => {
+            document.querySelectorAll('.note-pin.open').forEach(p => p.classList.remove('open'));
+            pin.classList.add('open');
+          }, 400);
+        }
+      });
+    });
+  }
+
+  function updateCount() {
+    document.getElementById('note-count').textContent = notes.length === 0 ? '0 notes' : `${notes.length} note${notes.length !== 1 ? 's' : ''}`;
+  }
+
+  function deleteNote(id) {
+    notes = notes.filter(n => n.id !== id);
+    save();
+    renderAllPins();
+    renderPanel();
+  }
+
+  // ── Add note on click ──
+  document.addEventListener('click', (e) => {
+    if (!reviewActive) return;
+
+    // Don't fire if clicking on review bar, notes panel, a pin, or export modal
+    if (e.target.closest('#review-bar') ||
+        e.target.closest('#notes-panel') ||
+        e.target.closest('.note-pin') ||
+        e.target.closest('#export-modal')) return;
+
+    // Prevent nav links from navigating during review
+    if (e.target.closest('nav') || e.target.closest('.hero-cta-group') || e.target.tagName === 'A') {
+      e.preventDefault();
+    }
+
+    const note = {
+      id: nextId++,
+      num: notes.length + 1,
+      type: currentType,
+      x: e.pageX,
+      y: e.pageY,
+      section: detectSection(e.target),
+      text: ''
+    };
+
+    notes.push(note);
+    save();
+    renderPin(note);
+    updateCount();
+    renderPanel();
+
+    // Auto-open the new note's popup
+    setTimeout(() => {
+      const pin = document.querySelector(`.note-pin[data-id="${note.id}"]`);
+      if (pin) {
+        pin.classList.add('open');
+        pin.querySelector('.note-textarea').focus();
+      }
+    }, 50);
+  });
+
+  // ── Review mode toggle ──
+  document.getElementById('review-toggle').addEventListener('click', (e) => {
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
+    reviewActive = !reviewActive;
+    document.body.classList.toggle('review-active', reviewActive);
+    document.getElementById('toggle-label').textContent = reviewActive ? 'On' : 'Off';
+  });
+
+  // ── Type buttons ──
+  document.querySelectorAll('.type-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentType = btn.dataset.type;
+      // Auto-enable review mode when a type is selected
+      if (!reviewActive) {
+        reviewActive = true;
+        document.body.classList.add('review-active');
+        document.getElementById('toggle-label').textContent = 'On';
+      }
+    });
+  });
+
+  // ── Clear all ──
+  document.getElementById('clear-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (notes.length === 0) return;
+    if (!confirm(`Delete all ${notes.length} note${notes.length !== 1 ? 's' : ''}?`)) return;
+    notes = [];
+    nextId = 1;
+    save();
+    renderAllPins();
+    renderPanel();
+  });
+
+  // ── Notes panel ──
+  document.getElementById('panel-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const panel = document.getElementById('notes-panel');
+    const isOpen = panel.classList.toggle('open');
+    document.getElementById('panel-btn').textContent = isOpen ? 'Hide Notes' : 'Show Notes';
+  });
+
+  document.getElementById('panel-close').addEventListener('click', () => {
+    document.getElementById('notes-panel').classList.remove('open');
+    document.getElementById('panel-btn').textContent = 'Show Notes';
+  });
+
+  // ── Export ──
+  function buildExportText() {
+    if (notes.length === 0) return 'No notes to export.';
+    const now = new Date().toLocaleString();
+    let out = `LAS VEGAS RECORD SEALING — PAGE REVIEW NOTES\n`;
+    out += `Exported: ${now}\n`;
+    out += `Total notes: ${notes.length}\n`;
+    out += `${'─'.repeat(50)}\n\n`;
+
+    const order = ['keep','remove','add','change'];
+    order.forEach(type => {
+      const group = notes.filter(n => n.type === type);
+      if (!group.length) return;
+      out += `${TYPE_LABELS[type].toUpperCase()} (${group.length})\n`;
+      out += `${'─'.repeat(30)}\n`;
+      group.forEach(n => {
+        out += `  #${n.num} — ${n.section}\n`;
+        out += `  ${n.text ? n.text : '(no note text)'}\n\n`;
+      });
+    });
+    return out;
+  }
+
+  function openExport() {
+    document.getElementById('export-text').value = buildExportText();
+    document.getElementById('export-modal').classList.add('open');
+  }
+
+  document.getElementById('export-btn').addEventListener('click', (e) => { e.stopPropagation(); openExport(); });
+  document.getElementById('panel-export-btn').addEventListener('click', openExport);
+  document.getElementById('export-modal-close').addEventListener('click', () => document.getElementById('export-modal').classList.remove('open'));
+  document.getElementById('export-modal-close2').addEventListener('click', () => document.getElementById('export-modal').classList.remove('open'));
+  document.getElementById('export-modal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('export-modal')) document.getElementById('export-modal').classList.remove('open');
+  });
+
+  document.getElementById('copy-btn').addEventListener('click', () => {
+    const ta = document.getElementById('export-text');
+    ta.select();
+    document.execCommand('copy');
+    document.getElementById('copy-btn').textContent = 'Copied!';
+    setTimeout(() => { document.getElementById('copy-btn').textContent = 'Copy to Clipboard'; }, 2000);
+  });
+
+  // ── Init ──
+  renderAllPins();
+  renderPanel();
+</script>
+
+</body>
+</html>
