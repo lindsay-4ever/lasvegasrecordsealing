@@ -125,6 +125,7 @@
 
     .q-title{ font-size:19px; margin-bottom:6px; font-family:Georgia, serif; color:var(--navy); }
     .q-help{ color:var(--muted); font-size:13.5px; margin-bottom:16px; }
+    .field-hint{ color:var(--muted); font-size:12.5px; margin:5px 0 0; }
 
     .stop-list{ list-style:none; margin:14px 0 18px; display:flex; flex-direction:column; gap:8px; }
     .stop-list li{ display:flex; align-items:flex-start; gap:10px; font-size:14px; padding:10px 12px; background:var(--red-bg); border:1px solid var(--red-border); border-radius:8px; color:var(--red-text); }
@@ -476,9 +477,11 @@
       <label class="field-label" for="fullName">Full name</label>
       <input type="text" id="fullName" name="fullName" autocomplete="name">
       <label class="field-label" for="phone">Phone number</label>
-      <input type="tel" id="phone" name="phone" autocomplete="tel">
+      <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="(702) 555-1234" maxlength="16" aria-describedby="phoneHelp">
+      <div class="field-hint" id="phoneHelp">10-digit U.S. number, e.g. (702) 555-1234</div>
       <label class="field-label" for="email">Email address</label>
-      <input type="email" id="email" name="email" autocomplete="email">
+      <input type="email" id="email" name="email" autocomplete="email" placeholder="name@example.com" aria-describedby="emailHelp">
+      <div class="field-hint" id="emailHelp">e.g. name@example.com</div>
       <label class="field-label">Preferred contact method</label>
       <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:14px;">
         <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;"><input type="radio" name="preferredContact" value="phone"> Phone call</label>
@@ -810,7 +813,11 @@ function validateCurrent() {
     if (!document.getElementById('county').value) return alert2('Please select your county.');
     if (!document.getElementById('fullName').value.trim()) return alert2('Please enter your name.');
     if (!document.getElementById('phone').value.trim()) return alert2('Please enter your phone number.');
+    if (!/^1?\d{10}$/.test(document.getElementById('phone').value.replace(/\D/g, '')))
+      return alert2('Please enter a 10-digit phone number, e.g. (702) 555-1234.');
     if (!document.getElementById('email').value.trim()) return alert2('Please enter your email address.');
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(document.getElementById('email').value.trim()))
+      return alert2('Please enter a complete email address, e.g. name@example.com.');
     if (!document.querySelector('input[name="preferredContact"]:checked')) return alert2('Please select your preferred contact method.');
     if (!document.getElementById('consent').checked) return alert2('Please check the consent box to continue.');
   }
@@ -1136,6 +1143,17 @@ function updateWaitPreview() {
 }
 
 // ── EVENTS ───────────────────────────────────────────────────────────────────
+// Phone: format as (702) 555-1234 while typing
+document.getElementById('phone').addEventListener('input', function () {
+  let d = this.value.replace(/\D/g, '');
+  if (d.length === 11 && d[0] === '1') d = d.slice(1);
+  d = d.slice(0, 10);
+  if (d.length > 6)      this.value = `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+  else if (d.length > 3) this.value = `(${d.slice(0,3)}) ${d.slice(3)}`;
+  else                   this.value = d;
+});
+
+
 document.getElementById('nextBtn').addEventListener('click', advance);
 document.getElementById('backBtn').addEventListener('click', goBack);
 
