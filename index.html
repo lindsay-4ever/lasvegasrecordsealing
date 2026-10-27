@@ -657,6 +657,9 @@
 
     .footer-contact { display: flex; flex-direction: column; gap: 0.5rem; }
 
+    .footer-contact a.footer-phone { flex-wrap: wrap; row-gap: 2px; }
+    .footer-contact .phone-digits { flex-basis: 100%; font-size: 0.75rem; opacity: 0.7; padding-left: 1.35em; }
+
     .footer-contact a {
       font-family: 'Arial', sans-serif;
       font-size: 0.85rem;
@@ -906,7 +909,7 @@
       <div class="footer-founder">Founded by Kenneth A. Stover</div>
       <p>We handle Nevada record sealing so old charges stop costing you opportunities.</p>
       <div class="footer-contact">
-        <a href="tel:+17028157325">☎ (702) 815-SEAL (7325)</a>
+        <a class="footer-phone" href="tel:+17028157325" aria-label="Call (702) 815-7325">☎ (702) 815-SEAL<span class="phone-digits">(702) 815-7325</span></a>
         <a href="mailto:placeholderemail@lasvegasrecordsealing.com">✉ placeholderemail@lasvegasrecordsealing.com</a>
       </div>
     </div>
