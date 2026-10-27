@@ -125,6 +125,7 @@
 
     .q-title{ font-size:19px; margin-bottom:6px; font-family:Georgia, serif; color:var(--navy); }
     .q-help{ color:var(--muted); font-size:13.5px; margin-bottom:16px; }
+    .deadline-red{ color:var(--flag-red); }
     .field-hint{ color:var(--muted); font-size:12.5px; margin:5px 0 0; }
     .loc-row{ display:flex; gap:12px; flex-wrap:wrap; }
     .loc-city{ flex:2 1 220px; } .loc-state{ flex:1 1 160px; }
@@ -1023,7 +1024,7 @@ function renderResult(outcome) {
         <div class="next-step-item"><div class="step-num">1</div><div><strong>We'll contact you first.</strong> Our office will reach out to go over your case and ask a few questions, so we can confirm your situation before anything else.</div></div>
         <div class="next-step-item"><div class="step-num">2</div><div><strong>Then we'll send your Sealing Record Packet.</strong> If your case looks like a fit, we'll email you a packet explaining how to order your official State and Federal criminal history records. This is the one step you handle directly, since Nevada law requires you to request your own records.</div></div>
         <div class="next-step-item"><div class="step-num">3</div><div><strong>Our office takes it from there.</strong> Once your records arrive, our attorneys prepare your Petition to Seal Records, handle all court filings, and guide you through the process from start to finish.</div></div>
-        <p style="margin-top:14px; font-size:14px;"><strong>One deadline to keep in mind:</strong> Once you receive your State criminal history record, you have <strong>30 days</strong> to file your Petition. Contact our office as soon as it arrives.</p>
+        <p style="margin-top:14px; font-size:14px;"><strong class="deadline-red">One deadline to keep in mind:</strong> Once you receive your State criminal history record, you have <strong class="deadline-red">30 days</strong> to file your Petition. Contact our office as soon as it arrives.</p>
       </div>
       <p style="margin-top:18px; font-size:14px;">Watch for a call or email from our office. Want to talk sooner? Call us at <a href="tel:+17028157325" style="color:var(--navy); font-weight:bold;">(702) 815-7325</a>.</p>
       <p class="disclaimer">This is an informational estimate based on the answers you provided. Eligibility is determined by an attorney after reviewing your verified State criminal record. Results do not constitute legal advice.</p>
@@ -1042,7 +1043,7 @@ function renderResult(outcome) {
         <h3>Here's how to use the time wisely:</h3>
         <div class="next-step-item"><div class="step-num">1</div><div>Our office will email you a <strong>Sealing Record Packet</strong> so you can get your criminal history records ordered now — well before your eligibility date arrives. State records take about 45 days to process, and FBI records take additional time, so starting early matters.</div></div>
         <div class="next-step-item"><div class="step-num">2</div><div>Ordering your records is the one step you handle directly — Nevada law requires you to request them yourself. The packet walks you through exactly how. Once your eligibility date arrives and your records are in hand, <strong>Our office handles everything else</strong> — drafting your Petition, preparing court filings, and seeing the process through.</div></div>
-        <div class="next-step-item"><div class="step-num">3</div><div><strong>One deadline to keep in mind:</strong> Once you receive your State criminal history record, you have <strong>30 days</strong> to file your Petition. Contact our office as soon as it arrives — don't let it sit.</div></div>
+        <div class="next-step-item"><div class="step-num">3</div><div><strong class="deadline-red">One deadline to keep in mind:</strong> Once you receive your State criminal history record, you have <strong class="deadline-red">30 days</strong> to file your Petition. Contact our office as soon as it arrives — don't let it sit.</div></div>
       </div>
       <p style="margin-top:18px; font-size:14px;">We'll be reaching out to <strong>${S.phone}</strong> or <strong>${S.email}</strong> shortly to confirm your information and get your Sealing Record Packet on its way. Questions in the meantime? Call us at <a href="tel:+17028157325" style="color:var(--navy); font-weight:bold;">(702) 815-7325</a>.</p>
       <p class="disclaimer">This is an estimate based on the answers you provided. Your actual eligibility date may differ depending on your specific sentence terms. This does not constitute legal advice.</p>
