@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Privacy Policy | Las Vegas Record Sealing</title>
+  <meta name="description" content="How Las Vegas Record Sealing collects, uses, and protects the information you share through our website and free eligibility check." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.lasvegasrecordsealing.com/privacy.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&display=swap">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Privacy Policy | Las Vegas Record Sealing" />
+  <meta property="og:description" content="How we collect, use, and protect your information." />
+  <meta property="og:url" content="https://www.lasvegasrecordsealing.com/privacy.html" />
+  <meta property="og:site_name" content="Las Vegas Record Sealing" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0d2b4e;
+      --gold: #c9a84c;
+      --gold-light: #e8c96a;
+      --light-bg: #f7f8fa;
+      --text: #1a1a2e;
+      --muted: #5a6470;
+      --white: #ffffff;
+      --border: #e0e4ea;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Georgia', serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.7;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--navy);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 68px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    }
+
+    .nav-logo {
+      color: var(--gold);
+      font-size: 1.05rem;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+      list-style: none;
+    }
+    .nav-links li:last-child { margin-left: 0.4rem; }
+
+    .nav-links a {
+      color: #ccd6e0;
+      text-decoration: none;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      background: var(--gold);
+      color: var(--navy) !important;
+      padding: 0.45rem 1rem;
+      border-radius: 4px;
+      font-weight: bold !important;
+      transition: background 0.2s !important;
+      white-space: nowrap;
+    }
+
+    .nav-cta:hover { background: var(--gold-light) !important; color: var(--navy) !important; }
+
+    /* HAMBURGER */
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; z-index: 101; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--gold); border-radius: 2px; transition: transform 0.25s, opacity 0.25s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* PAGE HEADER */
+    .page-header {
+      background: linear-gradient(135deg, var(--navy) 60%, #1a4a7a 100%);
+      color: var(--white);
+      padding: 120px 5% 70px;
+      text-align: center;
+    }
+
+    .page-header .section-label {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    .page-header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      color: var(--white);
+      margin-bottom: 1rem;
+      line-height: 1.25;
+    }
+
+    .page-header p {
+      font-family: 'Arial', sans-serif;
+      font-size: 1rem;
+      color: #b8c8d8;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    /* PRICING SECTION */
+    .pricing-section {
+      background: var(--white);
+      padding: 80px 5%;
+    }
+
+    .pricing-inner {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      background: var(--light-bg);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--gold);
+      border-radius: 10px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+
+    .pricing-card h2 {
+      color: var(--navy);
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-card .price-note {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .fee-rows { border: 1px solid var(--border); border-radius: 8px; margin: 0 0 1.25rem; overflow: hidden; }
+    .fee-row { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 0.85rem 1.1rem; font-family: 'Arial', sans-serif; }
+    .fee-row + .fee-row { border-top: 1px solid var(--border); }
+    .fee-label { color: var(--navy); font-weight: bold; font-size: 0.95rem; }
+    .fee-amount { color: var(--navy); font-family: 'Georgia', serif; font-size: 1.2rem; white-space: nowrap; }
+    @media (max-width: 520px) { .fee-row { flex-direction: column; gap: 0.15rem; } .fee-amount { white-space: normal; } }
+    .fee-row-muted .fee-label, .fee-row-muted .fee-amount { color: var(--muted); font-weight: normal; font-size: 0.9rem; font-family: 'Arial', sans-serif; }
+
+    .pricing-placeholder {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.92rem;
+      color: #b00;
+      font-style: italic;
+      background: #fff5f5;
+      border: 1px dashed #e0a0a0;
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .what-included {
+      margin-top: 1.5rem;
+    }
+
+    .what-included h3 {
+      color: var(--navy);
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .included-list {
+      list-style: none;
+    }
+
+    .included-list li {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.92rem;
+      color: var(--muted);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+    }
+
+    .included-list li:last-child { border-bottom: none; }
+
+    .check-icon { color: #2e8b57; flex-shrink: 0; margin-top: 3px; }
+
+    /* PAYMENT PLANS */
+    .payment-section {
+      background: var(--light-bg);
+      padding: 60px 5%;
+      border-top: 1px solid var(--border);
+    }
+
+    .payment-inner {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+    }
+
+    h2 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: var(--navy);
+      margin-bottom: 1rem;
+      line-height: 1.25;
+    }
+
+    .payment-inner p {
+      font-family: 'Arial', sans-serif;
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    /* CTA BANNER */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--navy) 60%, #1a4a7a 100%);
+      padding: 70px 5%;
+      text-align: center;
+      color: var(--white);
+    }
+
+    .cta-banner h2 {
+      color: var(--white);
+      margin-bottom: 0.8rem;
+    }
+
+    .cta-banner p {
+      font-family: 'Arial', sans-serif;
+      color: #b8c8d8;
+      margin-bottom: 2rem;
+      font-size: 0.98rem;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+      padding: 0.85rem 2rem;
+      border-radius: 5px;
+      font-family: 'Arial', sans-serif;
+      font-weight: bold;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.1s;
+      display: inline-block;
+    }
+
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+    /* FOOTER */
+    footer { background: #070f1a; }
+
+    .footer-main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 64px 5% 56px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 3rem;
+    }
+
+    .footer-brand-name {
+      font-family: 'EB Garamond', 'Georgia', serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 0.01em;
+      margin-bottom: 0.4rem;
+      line-height: 1.3;
+    }
+
+    .footer-founder {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand p {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
+      max-width: 300px;
+      margin-bottom: 1.4rem;
+    }
+
+    .footer-contact { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .footer-contact a.footer-phone { flex-wrap: wrap; row-gap: 2px; }
+    .footer-contact .phone-digits { flex-basis: 100%; font-size: 0.75rem; opacity: 0.7; padding-left: 1.35em; }
+
+    .footer-contact a {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.88);
+      text-decoration: none;
+      transition: color 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .footer-contact a:hover { color: var(--gold); }
+
+    .footer-col-label {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.1rem;
+      opacity: 0.85;
+    }
+
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+
+    .footer-links a {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.84rem;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.18s;
+      line-height: 1.4;
+    }
+
+    .footer-links a:hover { color: rgba(255,255,255,0.88); }
+
+    .footer-links a.footer-cta {
+      color: var(--gold);
+      font-weight: bold;
+      font-size: 0.82rem;
+      letter-spacing: 0.02em;
+      margin-top: 0.3rem;
+    }
+
+    .footer-links a.footer-cta:hover { color: var(--gold-light); }
+
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.09); }
+
+    .footer-bottom-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-copyright {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.76rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.5;
+    }
+
+    .footer-social a {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.76rem;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.18s;
+    }
+
+    .footer-social a:hover { color: var(--gold); }
+
+    .footer-disclaimer {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 5% 20px;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.25);
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    @media (max-width: 620px) {
+      .footer-main { grid-template-columns: 1fr; padding: 48px 6% 40px; gap: 2rem; }
+      .footer-brand p { max-width: none; }
+      .footer-bottom-inner { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 0 4%; }
+      .hamburger { display: flex; }
+      .nav-links { display: none; position: fixed; top: 68px; left: 0; right: 0; background: var(--navy); flex-direction: column; padding: 0.5rem 5% 1.5rem; gap: 0; border-top: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 16px rgba(0,0,0,0.3); z-index: 99; }
+      .nav-links.open { display: flex; }
+      .nav-links li { border-bottom: 1px solid rgba(255,255,255,0.07); }
+      .nav-links a { padding: 0.9rem 0; display: block; font-size: 0.95rem; }
+      .nav-cta { margin: 1rem 0 0.3rem; text-align: center; display: block; padding: 0.8rem 1rem !important; border-radius: 5px !important; }
+    }
+
+    /* PRIVACY POLICY */
+    .policy { max-width: 760px; margin: 0 auto; padding: 3rem 5% 4rem; font-family: 'Arial', sans-serif; color: var(--text); }
+    .policy h2 { font-family: 'Georgia', serif; color: var(--navy); font-size: 1.35rem; margin: 2.2rem 0 0.8rem; }
+    .policy h3 { font-family: 'Georgia', serif; color: var(--navy); font-size: 1.05rem; margin: 1.4rem 0 0.5rem; }
+    .policy p, .policy li { font-size: 0.95rem; line-height: 1.7; color: var(--muted); }
+    .policy p + p { margin-top: 0.75rem; }
+    .policy ul { margin: 0.5rem 0 0.75rem 1.25rem; }
+    .policy li { margin-bottom: 0.35rem; }
+    .policy strong { color: var(--navy); }
+    .policy a { color: var(--navy); }
+    .policy .effective { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .policy .callout { background: var(--light-bg); border-left: 4px solid var(--gold); border-radius: 0 6px 6px 0; padding: 1rem 1.2rem; margin: 1rem 0; }
+    .flag-red { color: #b00; font-style: italic; }
+    .flag-green { color: #1a6b3c; font-style: italic; }
+    .review-banner { max-width: 760px; margin: 1.5rem auto 0; padding: 0.9rem 1.1rem; border: 1px dashed #1a6b3c; border-radius: 6px; background: #f1f8f3; font-family: 'Arial', sans-serif; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Las Vegas Record Sealing</a>
+  <button class="hamburger" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links">
+    <li><a href="ken-stover.html">Ken Stover</a></li>
+    <li><a href="seansullivan.html">Sean Sullivan</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="eligibility.html" class="nav-cta">Check Your Eligibility for Free</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <p class="section-label">Your Privacy</p>
+  <h1>Privacy Policy</h1>
+  <p>How we collect, use, and protect the information you share with us.</p>
+</div>
+
+<div class="review-banner"><span class="flag-green"><strong>AI Answer — Attorney Stover should revise:</strong> this entire policy was drafted by AI and must be reviewed and approved before launch. Red items need answers.</span></div>
+
+<!-- POLICY -->
+<main class="policy">
+  <p class="effective"><strong>Effective date:</strong> <span class="flag-red">Attorney needs to answer — set the date this policy goes live</span></p>
+
+  <p>This Privacy Policy explains how Las Vegas Record Sealing (<span class="flag-red">Attorney needs to answer — legal name of the business that operates this website</span>) (“we,” “us,” or “our”) collects, uses, shares, and protects information when you visit lasvegasrecordsealing.com or use our free eligibility check. It applies to visitors from anywhere in the United States.</p>
+
+  <div class="callout"><p><strong>The short version:</strong> We use what you tell us only to review your eligibility and contact you about record sealing. We never sell your information, and we never share the details of your case with advertising or analytics companies.</p></div>
+
+  <h2>1. Information We Collect</h2>
+  <h3>Information you give us</h3>
+  <p>When you use our eligibility check, you may provide:</p>
+  <ul>
+    <li><strong>Contact details</strong> — your name, phone number, email address, and preferred way to be contacted.</li>
+    <li><strong>Location</strong> — the county where your case was handled and the city, state, or country where you live now.</li>
+    <li><strong>Information about your case</strong> — such as the court, the charge, whether you were convicted, and related dates.</li>
+    <li><strong>Anything else you choose to share</strong> in the notes field or when you email us.</li>
+    <li><strong>Your consent</strong> to be contacted, and the date and time you submitted the form.</li>
+  </ul>
+  <h3>Information collected automatically</h3>
+  <p>When you visit our website, we and our service providers may automatically collect information such as your browser and device type, the pages you view, the website that referred you, and your general location based on your IP address. We collect this using cookies, pixels, and similar technologies — see <a href="#cookies">Cookies and Tracking</a> below.</p>
+
+  <h2>2. How We Use Your Information</h2>
+  <ul>
+    <li>To review your answers and estimate whether you may be eligible to seal your record.</li>
+    <li>To contact you about your inquiry by phone, text, or email, as you requested.</li>
+    <li>To allow our attorneys to evaluate your situation, discuss your options, and, if you move forward, prepare and file your petition.</li>
+    <li>To operate, secure, and improve our website.</li>
+    <li>To understand how visitors find us and to measure the effectiveness of our advertising.</li>
+    <li>To comply with legal obligations.</li>
+  </ul>
+  <p>Submitting the eligibility form or sending us an email does not create an attorney-client relationship.</p>
+
+  <h2>3. How We Share Your Information</h2>
+  <p><strong>We do not sell your personal information,</strong> and we do not share it with other companies for their own marketing.</p>
+  <p>We share information only as follows:</p>
+  <ul>
+    <li><strong>Our attorneys.</strong> Your eligibility form goes to the office of Kenneth A. Stover, which reviews it and contacts you. Once you have sent us the records requested in our record sealing packet, your file is shared with our partner attorney, Sean P. Sullivan, PC, who handles your petition.</li>
+    <li><strong>Service providers</strong> that help us run the website and store information on our behalf, such as our website host and our secure database provider. They may use the information only to provide services to us.</li>
+    <li><strong>Analytics and advertising providers</strong> (Google and Meta), who receive limited information about your visit — such as pages viewed and whether a form was submitted. <strong>We never send them your name, contact details, or any information about your case.</strong></li>
+    <li><strong>When required by law</strong>, such as to respond to a subpoena or court order, or to protect our rights or the safety of others.</li>
+    <li><strong>In a business transfer</strong>, such as a merger or sale of our business, subject to this policy.</li>
+  </ul>
+
+  <h2 id="cookies">4. Cookies and Tracking</h2>
+  <p>We use the following tools to understand how our website is used and to measure our advertising:</p>
+  <ul>
+    <li><strong>Google Analytics and Google Tag Manager</strong> — to see how visitors use our site. You can opt out with the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-out Browser Add-on</a>.</li>
+    <li><strong>Meta Pixel</strong> — to measure the results of our Facebook and Instagram ads. You can manage how Meta uses this information in your <a href="https://www.facebook.com/adpreferences" target="_blank" rel="noopener">Meta ad preferences</a>.</li>
+  </ul>
+  <p><strong>Third-party tracking across websites.</strong> Google and Meta may collect information about your online activities over time and across different websites when you visit our site, and may use it to show you ads. You can limit this by blocking or deleting cookies in your browser, using the opt-out tools above, or visiting the Digital Advertising Alliance’s <a href="https://optout.aboutads.info/" target="_blank" rel="noopener">WebChoices</a> tool.</p>
+  <p><strong>Do Not Track.</strong> Some browsers send a “Do Not Track” signal. Because there is no common standard for these signals, our website does not currently respond to them.</p>
+
+  <h2>5. Your Choices and Rights</h2>
+  <p>Wherever you live in the United States, you may ask us to:</p>
+  <ul>
+    <li>Tell you what personal information we have about you, and provide a copy;</li>
+    <li>Correct information that is inaccurate;</li>
+    <li>Delete your information, unless we are required to keep it;</li>
+    <li>Stop contacting you; or</li>
+    <li>Opt out of the use of your information for targeted advertising.</li>
+  </ul>
+  <p>To make a request, email us at <a href="mailto:info@lasvegasrecordsealing.com">info@lasvegasrecordsealing.com</a>. We may need to confirm your identity before responding, and we will respond within the time required by law. We will not treat you differently for exercising your rights.</p>
+  <p><strong>Nevada residents:</strong> We do not sell covered information as defined by Nevada law. You may still submit a request not to have your information sold by emailing us at the address above with the subject line “Nevada Opt-Out.”</p>
+  <p><strong>California residents:</strong> We do not sell or share your personal information for money. You may request access to, correction of, or deletion of your information as described above.</p>
+
+  <h2>6. How We Protect and Keep Your Information</h2>
+  <p>We store your information in a secure database that is not publicly accessible, and we limit access to the people who need it to respond to your inquiry. No method of storing or sending information online is completely secure, so we cannot guarantee absolute security. Please don’t send sensitive details about your case by email.</p>
+  <p>We keep your information only as long as needed to respond to your inquiry, provide services, and meet legal obligations — <span class="flag-red">Attorney needs to answer — how long leads are kept before they are deleted (e.g., 2 years after last contact)</span>.</p>
+
+  <h2>7. Children</h2>
+  <p>Our website is not directed to children under 13, and we do not knowingly collect personal information from them. If you believe a child has given us information, contact us and we will delete it.</p>
+
+  <h2>8. Changes to This Policy</h2>
+  <p>We may update this Privacy Policy from time to time. When we do, we will post the updated policy on this page and change the effective date at the top. If we make material changes, we will also note them prominently on this page.</p>
+
+  <h2>9. Contact Us</h2>
+  <p>If you have questions about this Privacy Policy or want to make a request, email us at <a href="mailto:info@lasvegasrecordsealing.com">info@lasvegasrecordsealing.com</a> or write to us at <span class="flag-red">Attorney needs to answer — mailing address</span>.</p>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <div class="footer-brand-name">Las Vegas Record Sealing</div>
+      <div class="footer-founder">Founded by Kenneth A. Stover</div>
+      <p>We handle Nevada record sealing so old charges stop costing you opportunities.</p>
+      <div class="footer-contact">
+        <a class="footer-phone" href="tel:+17028157325" aria-label="Call (702) 815-7325">☎ (702) 815-SEAL<span class="phone-digits">(702) 815-7325</span></a>
+        <a href="mailto:info@lasvegasrecordsealing.com">✉ info@lasvegasrecordsealing.com</a>
+      </div>
+    </div>
+    <div>
+      <p class="footer-col-label">Navigate</p>
+      <ul class="footer-links">
+            <li><a href="faq.html">FAQ</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="ken-stover.html">About Ken Stover</a></li>
+        <li><a href="seansullivan.html">About Sean Sullivan</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="eligibility.html" class="footer-cta">Check Eligibility →</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <p class="footer-copyright">© 2026 Las Vegas Record Sealing. All rights reserved.</p>
+      <div class="footer-social"><a href="https://www.facebook.com/lasvegasrecordsealing" target="_blank" rel="noopener">Facebook</a></div>
+    </div>
+    <p class="footer-disclaimer">The information on this website is for general informational purposes only and does not constitute legal advice. Submitting a form or sending an email does not create an attorney-client relationship. Results vary based on individual circumstances.</p>
+  </div>
+</footer>
+
+<script>
+  const hamburger = document.querySelector('.hamburger');
+  const navLinks = document.querySelector('.nav-links');
+  hamburger.addEventListener('click', function() {
+    const open = navLinks.classList.toggle('open');
+    hamburger.classList.toggle('open', open);
+    hamburger.setAttribute('aria-expanded', open);
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      hamburger.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', false);
+    });
+  });
+</script>
+</body>
+</html>
