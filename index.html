@@ -420,11 +420,16 @@
       background: var(--light-bg);
       border: 1px solid var(--border);
       border-top: 3px solid var(--gold);
-      padding: 1.8rem 2rem;
+      padding: 0 0 1.6rem;
       border-radius: 4px;
+      overflow: hidden;
+      text-align: center;
     }
+    .team-card picture { display: block; background: var(--navy); padding: 1.6rem 2rem; }
+    .team-card .team-role { margin-top: 1.2rem; }
+    .team-card .team-role, .team-card .team-name { padding: 0 2rem; }
 
-    .team-photo { display: block; width: 120px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 1rem; }
+    .team-photo { display: block; width: 120px; height: 120px; object-fit: cover; border-radius: 6px; border: 2px solid var(--gold); margin: 0 auto; }
 
     .team-role {
       font-family: 'Arial', sans-serif;
