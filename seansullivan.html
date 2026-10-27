@@ -307,14 +307,6 @@
 
     .membership-list li:last-child { border-bottom: none; }
 
-    /* EARLY CAREER / CLE */
-    .timeline-list { list-style: none; margin-bottom: 1.5rem; }
-    .timeline-list li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 0.9rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-family: 'Arial', sans-serif; font-size: 0.92rem; }
-    .timeline-list li:last-child { border-bottom: none; }
-    .tl-years { color: var(--gold); font-weight: bold; white-space: nowrap; }
-    .tl-role { color: var(--navy); }
-    .tl-note { color: var(--muted); }
-    @media (max-width: 560px) { .timeline-list li { grid-template-columns: 1fr; gap: 0.15rem; } }
 
     /* PARTNERSHIP NOTE */
     .partnership-note {
@@ -333,41 +325,10 @@
     }
 
     /* EDUCATION */
-    .edu-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
 
-    .edu-card {
-      background: var(--light-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.2rem 1.4rem;
-    }
 
-    .edu-card .edu-label {
-      font-family: 'Arial', sans-serif;
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--gold);
-      margin-bottom: 0.4rem;
-    }
 
-    .edu-card .edu-degree {
-      font-weight: bold;
-      color: var(--navy);
-      font-size: 0.95rem;
-      margin-bottom: 0.2rem;
-    }
 
-    .edu-card .edu-school {
-      font-family: 'Arial', sans-serif;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
 
     /* CTA BANNER */
     .cta-banner {
@@ -554,8 +515,110 @@
       .nav-links a { padding: 0.9rem 0; display: block; font-size: 0.95rem; }
       .nav-cta { margin: 1rem 0 0.3rem; text-align: center; display: block; padding: 0.8rem 1rem !important; border-radius: 5px !important; }
       .about-inner { grid-template-columns: 1fr; gap: 2rem; }
-      .edu-grid { grid-template-columns: 1fr; }
     }
+
+    /* EDUCATION & CAREER + HIGHLIGHTS (matches Ken Stover page) */
+    .cards-section {
+          background: var(--light-bg);
+          padding: 70px 5%;
+          border-top: 1px solid var(--border);
+        }
+    
+    .cards-inner {
+          max-width: 960px;
+          margin: 0 auto;
+        }
+    
+    .cards-inner h2 {
+          font-size: clamp(1.4rem, 3vw, 2rem);
+          color: var(--navy);
+          margin-bottom: 2rem;
+        }
+    
+    .edu-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 1.5rem;
+        }
+    
+    .edu-card {
+          background: var(--white);
+          border: 1px solid var(--border);
+          border-top: 3px solid var(--gold);
+          border-radius: 8px;
+          padding: 1.5rem;
+        }
+    
+    .edu-card .degree {
+          font-size: 0.98rem;
+          color: var(--navy);
+          font-weight: bold;
+          margin-bottom: 0.3rem;
+        }
+    
+    .edu-card .school {
+          font-family: 'Arial', sans-serif;
+          font-size: 0.88rem;
+          color: var(--muted);
+          margin-bottom: 0.2rem;
+        }
+    
+    .edu-card .year {
+          font-family: 'Arial', sans-serif;
+          font-size: 0.8rem;
+          color: var(--gold);
+          font-weight: bold;
+          letter-spacing: 0.05em;
+        }
+    
+    .awards-section {
+          background: var(--white);
+          padding: 70px 5%;
+          border-top: 1px solid var(--border);
+        }
+    
+    .awards-inner {
+          max-width: 960px;
+          margin: 0 auto;
+        }
+    
+    .awards-inner h2 {
+          font-size: clamp(1.4rem, 3vw, 2rem);
+          color: var(--navy);
+          margin-bottom: 2rem;
+        }
+    
+    .awards-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1.2rem;
+        }
+    
+    .award-card {
+          background: var(--light-bg);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 1.4rem 1.2rem;
+          text-align: center;
+        }
+    
+    .award-card .award-icon {
+          font-size: 1.6rem;
+          margin-bottom: 0.6rem;
+        }
+    
+    .award-card .award-name {
+          font-size: 0.9rem;
+          color: var(--navy);
+          font-weight: bold;
+          margin-bottom: 0.3rem;
+        }
+    
+    .award-card .award-org {
+          font-family: 'Arial', sans-serif;
+          font-size: 0.8rem;
+          color: var(--muted);
+        }
   </style>
 </head>
 <body>
@@ -623,55 +686,14 @@
 
       <hr class="divider" />
 
-      <h3>Education</h3>
-      <div class="edu-grid">
-        <div class="edu-card">
-          <p class="edu-label">Undergraduate</p>
-          <p class="edu-degree">B.S. Criminal Justice</p>
-          <p class="edu-school">University of Nevada, Reno · 1989</p>
-        </div>
-        <div class="edu-card">
-          <p class="edu-label">Law Degree</p>
-          <p class="edu-degree">Juris Doctor</p>
-          <p class="edu-school">California School of Law, San Diego · 1993</p>
-        </div>
-      </div>
-
-      <hr class="divider" />
-
-      <h3>Early Career</h3>
-      <ul class="timeline-list">
-        <li><span class="tl-years">1991–1992</span><span class="tl-role">Extern, U.S. District Court, District of Nevada <span class="tl-note">(Hon. Philip M. Pro)</span></span></li>
-        <li><span class="tl-years">1993–1994</span><span class="tl-role">Associate Counsel, Kevin M. Kelly, Ltd., Las Vegas</span></li>
-        <li><span class="tl-years">1994–2010</span><span class="tl-role">Managing Partner, Kelly &amp; Sullivan, Ltd., Las Vegas</span></li>
-        <li><span class="tl-years">2011–Present</span><span class="tl-role">Founder, Sean P. Sullivan, PC, Las Vegas</span></li>
-      </ul>
-
-      <hr class="divider" />
-
       <h3>Bar Admissions &amp; Memberships</h3>
       <ul class="membership-list">
         <li>⚖️ Nevada State Bar</li>
         <li>🏛️ Nevada Supreme Court</li>
         <li>🏛️ U.S. District Court for the District of Nevada</li>
-        <li>🏛️ Admitted pro hac vice in California, Hawaii, Arizona, Colorado &amp; Utah</li>
         <li>🏛️ Clark County Bar Association</li>
         <li>🏛️ Nevada Attorneys for Criminal Justice</li>
-        <li>🏛️ Nevada Trial Lawyers Association</li>
-        <li>🏛️ Minnesota Attorneys for Criminal Justice</li>
         <li>🏛️ National Association of Criminal Defense Lawyers</li>
-      </ul>
-
-      <hr class="divider" />
-
-      <h3>Continuing Legal Education</h3>
-      <ul class="timeline-list">
-        <li><span class="tl-years">2005</span><span class="tl-role">Warriors for Defense <span class="tl-note">— National Association of Criminal Defense Lawyers, New York City</span></span></li>
-        <li><span class="tl-years">2005</span><span class="tl-role">9th Annual DUI Seminar: “Under the Microscope: Beating DUI’s with Science” <span class="tl-note">— Las Vegas</span></span></li>
-        <li><span class="tl-years">2004</span><span class="tl-role">Jury Selection and Trial Advocacy in Nevada <span class="tl-note">— Lorman Education Services, Las Vegas</span></span></li>
-        <li><span class="tl-years">2002</span><span class="tl-role">Second National Seminar on Forensic Evidence and the Criminal Law <span class="tl-note">— Administrative Office of the U.S. Courts, New Orleans</span></span></li>
-        <li><span class="tl-years">2002</span><span class="tl-role">“DUI: Point/Counterpoint” <span class="tl-note">— State Bar of Nevada, Las Vegas</span></span></li>
-        <li><span class="tl-years">1995</span><span class="tl-role">“Getting Tough on DWI: The Defense” <span class="tl-note">— Minnesota Society for Criminal Justice, Las Vegas</span></span></li>
       </ul>
 
 
@@ -679,6 +701,67 @@
 
   </div>
 </section>
+
+<!-- EDUCATION & CAREER -->
+<section class="cards-section">
+  <div class="cards-inner">
+    <p class="section-label">Background</p>
+    <h2>Education &amp; Early Career</h2>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <p class="degree">B.S. Criminal Justice</p>
+        <p class="school">University of Nevada, Reno</p>
+        <p class="year">1989</p>
+      </div>
+      <div class="edu-card">
+        <p class="degree">Juris Doctor</p>
+        <p class="school">California School of Law, San Diego</p>
+        <p class="year">1993</p>
+      </div>
+      <div class="edu-card">
+        <p class="degree">Managing Partner</p>
+        <p class="school">Kelly &amp; Sullivan, Ltd., Las Vegas</p>
+        <p class="year">1994–2010</p>
+      </div>
+      <div class="edu-card">
+        <p class="degree">Founder</p>
+        <p class="school">Sean P. Sullivan, PC, Las Vegas</p>
+        <p class="year">2011–Present</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HIGHLIGHTS -->
+<section class="awards-section">
+  <div class="awards-inner">
+    <p class="section-label">Experience</p>
+    <h2>Professional Highlights</h2>
+    <div class="awards-grid">
+      <div class="award-card">
+        <div class="award-icon">🏛️</div>
+        <p class="award-name">Federal Court Extern</p>
+        <p class="award-org">U.S. District Court, District of Nevada — Hon. Philip M. Pro</p>
+      </div>
+      <div class="award-card">
+        <div class="award-icon">⚖️</div>
+        <p class="award-name">Practicing Since 1993</p>
+        <p class="award-org">30+ years in Nevada courts</p>
+      </div>
+      <div class="award-card">
+        <div class="award-icon">🗺️</div>
+        <p class="award-name">Multi-State Practice</p>
+        <p class="award-org">Admitted pro hac vice in CA, HI, AZ, CO &amp; UT</p>
+      </div>
+      <div class="award-card">
+        <div class="award-icon">🎓</div>
+        <p class="award-name">Warriors for Defense</p>
+        <p class="award-org">National Association of Criminal Defense Lawyers, 2005</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <!-- CTA -->
 <div class="cta-banner">
