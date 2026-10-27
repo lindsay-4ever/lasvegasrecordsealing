@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="color-scheme" content="light">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Free Nevada Record Sealing Eligibility Check | Las Vegas | Stover Law</title>
   <meta name="description" content="Can you seal your Nevada criminal record? Find out free — no obligation. Answer a few questions about your Las Vegas or Clark County case and get an instant answer." />
@@ -91,28 +92,8 @@
       --red-bg:#fbeaea; --red-border:#c0463f; --red-text:#7a251f;
       --pill-bg:#eef3f8; --pill-text:#0d2b4e;
     }
-    @media (prefers-color-scheme: dark){
-      :root:not([data-theme="light"]){
-        --navy:#e6d5a3; --navy-light:#f0e2ba; --gold:#d8bc6e; --gold-light:#e6d5a3;
-        --bg:#0a1420; --white:#132234; --card:#132234; --text:#e9edf2; --muted:#93a5b8; --border:#28405c;
-        --input-bg:#0f1d2d; --option-hover-bg:#182c42; --option-selected-bg:#1c3350; --summary-bg:#0f1d2d;
-        --flag-red:#e2837c; --flag-green:#6fcf8f;
-        --green-bg:#12301e; --green-border:#3f9e5c; --green-text:#8fdba8;
-        --amber-bg:#2e2510; --amber-border:#c9a84c; --amber-text:#e0c477;
-        --red-bg:#2e1614; --red-border:#c0463f; --red-text:#e2837c;
-        --pill-bg:#1c3350; --pill-text:#e6d5a3;
-      }
-    }
-    :root[data-theme="dark"]{
-      --navy:#e6d5a3; --navy-light:#f0e2ba; --gold:#d8bc6e; --gold-light:#e6d5a3;
-      --bg:#0a1420; --white:#132234; --card:#132234; --text:#e9edf2; --muted:#93a5b8; --border:#28405c;
-      --input-bg:#0f1d2d; --option-hover-bg:#182c42; --option-selected-bg:#1c3350; --summary-bg:#0f1d2d;
-      --flag-red:#e2837c; --flag-green:#6fcf8f;
-      --green-bg:#12301e; --green-border:#3f9e5c; --green-text:#8fdba8;
-      --amber-bg:#2e2510; --amber-border:#c9a84c; --amber-text:#e0c477;
-      --red-bg:#2e1614; --red-border:#c0463f; --red-text:#e2837c;
-      --pill-bg:#1c3350; --pill-text:#e6d5a3;
-    }
+    /* Dark mode removed — form always uses the light theme, matching the rest of the site. */
+    :root{ color-scheme: light; }
 
     a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible{
       outline:2.5px solid var(--gold); outline-offset:2px;
@@ -162,7 +143,7 @@
       width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:8px;
       font-size:14.5px; font-family:Arial, sans-serif; color:var(--text); background:var(--input-bg);
     }
-    select{ color-scheme: light dark; }
+    select{ color-scheme: light; }
     select:focus, input:focus, textarea:focus{ outline:none; border-color:var(--navy); }
     textarea{ resize:vertical; min-height:70px; }
     .inline-check{ display:flex; align-items:center; gap:8px; margin-top:10px; font-size:13.5px; color:var(--muted); }
