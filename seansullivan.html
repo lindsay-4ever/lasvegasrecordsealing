@@ -307,6 +307,15 @@
 
     .membership-list li:last-child { border-bottom: none; }
 
+    /* EARLY CAREER / CLE */
+    .timeline-list { list-style: none; margin-bottom: 1.5rem; }
+    .timeline-list li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 0.9rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-family: 'Arial', sans-serif; font-size: 0.92rem; }
+    .timeline-list li:last-child { border-bottom: none; }
+    .tl-years { color: var(--gold); font-weight: bold; white-space: nowrap; }
+    .tl-role { color: var(--navy); }
+    .tl-note { color: var(--muted); }
+    @media (max-width: 560px) { .timeline-list li { grid-template-columns: 1fr; gap: 0.15rem; } }
+
     /* PARTNERSHIP NOTE */
     .partnership-note {
       background: var(--light-bg);
@@ -606,7 +615,7 @@
         <p>Sean P. Sullivan is our Las Vegas partner attorney, bringing over 30 years of Nevada courtroom experience to every record sealing case.</p>
       </div>
 
-      <p>Sean P. Sullivan has been defending Nevadans in the criminal justice system for over 30 years. His career in Nevada law began in 1994, and he has spent more than three decades developing deep expertise in Nevada criminal defense — including Nevada's record sealing statutes and procedures.</p>
+      <p>Sean P. Sullivan has been defending Nevadans in the criminal justice system for over 30 years. He has been practicing law in Nevada since 1993, and he has spent more than three decades developing deep expertise in Nevada criminal defense — including Nevada's record sealing statutes and procedures.</p>
 
       <p>After serving as managing partner of Kelly & Sullivan, Ltd. from 1994 to 2010, Sullivan established his independent Las Vegas practice in 2011. He has handled thousands of criminal matters in the Nevada court system, including record sealing petitions across Clark County and throughout Nevada.</p>
 
@@ -630,14 +639,39 @@
 
       <hr class="divider" />
 
+      <h3>Early Career</h3>
+      <ul class="timeline-list">
+        <li><span class="tl-years">1991–1992</span><span class="tl-role">Extern, U.S. District Court, District of Nevada <span class="tl-note">(Hon. Philip M. Pro)</span></span></li>
+        <li><span class="tl-years">1993–1994</span><span class="tl-role">Associate Counsel, Kevin M. Kelly, Ltd., Las Vegas</span></li>
+        <li><span class="tl-years">1994–2010</span><span class="tl-role">Managing Partner, Kelly &amp; Sullivan, Ltd., Las Vegas</span></li>
+        <li><span class="tl-years">2011–Present</span><span class="tl-role">Founder, Sean P. Sullivan, PC, Las Vegas</span></li>
+      </ul>
+
+      <hr class="divider" />
+
       <h3>Bar Admissions &amp; Memberships</h3>
       <ul class="membership-list">
         <li>⚖️ Nevada State Bar</li>
         <li>🏛️ Nevada Supreme Court</li>
         <li>🏛️ U.S. District Court for the District of Nevada</li>
+        <li>🏛️ Admitted pro hac vice in California, Hawaii, Arizona, Colorado &amp; Utah</li>
         <li>🏛️ Clark County Bar Association</li>
         <li>🏛️ Nevada Attorneys for Criminal Justice</li>
+        <li>🏛️ Nevada Trial Lawyers Association</li>
+        <li>🏛️ Minnesota Attorneys for Criminal Justice</li>
         <li>🏛️ National Association of Criminal Defense Lawyers</li>
+      </ul>
+
+      <hr class="divider" />
+
+      <h3>Continuing Legal Education</h3>
+      <ul class="timeline-list">
+        <li><span class="tl-years">2005</span><span class="tl-role">Warriors for Defense <span class="tl-note">— National Association of Criminal Defense Lawyers, New York City</span></span></li>
+        <li><span class="tl-years">2005</span><span class="tl-role">9th Annual DUI Seminar: “Under the Microscope: Beating DUI’s with Science” <span class="tl-note">— Las Vegas</span></span></li>
+        <li><span class="tl-years">2004</span><span class="tl-role">Jury Selection and Trial Advocacy in Nevada <span class="tl-note">— Lorman Education Services, Las Vegas</span></span></li>
+        <li><span class="tl-years">2002</span><span class="tl-role">Second National Seminar on Forensic Evidence and the Criminal Law <span class="tl-note">— Administrative Office of the U.S. Courts, New Orleans</span></span></li>
+        <li><span class="tl-years">2002</span><span class="tl-role">“DUI: Point/Counterpoint” <span class="tl-note">— State Bar of Nevada, Las Vegas</span></span></li>
+        <li><span class="tl-years">1995</span><span class="tl-role">“Getting Tough on DWI: The Defense” <span class="tl-note">— Minnesota Society for Criminal Justice, Las Vegas</span></span></li>
       </ul>
 
 
