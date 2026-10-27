@@ -32,8 +32,6 @@ insert into public.charge_special_cases (charge_name, staff_note) values
    'Ask what the underlying crime was. Felony sex offense → cannot be sealed. Anything else → sealable (Ken to confirm wait period; likely 10 years).'),
   ('Open or Gross Lewdness — First Offense',
    'Ask: was a child under 18 or a vulnerable person present, or any prior sex-offense conviction? If yes → felony → cannot be sealed. If no → gross misdemeanor → 2 years.'),
-  ('Conspiracy — General (Felony Underlying Offense)',
-   'Ask what the conspiracy was to commit. Murder, robbery, sexual assault, kidnapping, arson or trafficking → Cat B felony → 5 years. Most others → gross misdemeanor → 2 years.'),
   ('Pandering / Living from Earnings of a Prostitute (Adult Victim)',
    'Confirm the victim''s age. Adult → 10 years. Child → cannot be sealed.')
 on conflict (charge_name) do update set staff_note = excluded.staff_note;
