@@ -17,6 +17,40 @@
   <meta property="og:description" content="Meet Sean P. Sullivan, Esq. — Nevada criminal defense attorney with over 30 years of experience, serving as Las Vegas Record Sealing's partner attorney." />
   <meta property="og:url" content="https://www.lasvegasrecordsealing.com/seansullivan.html" />
   <meta property="og:site_name" content="Las Vegas Record Sealing" />
+  <meta property="og:image" content="https://www.lasvegasrecordsealing.com/images/sean-sullivan-las-vegas-record-sealing-attorney.jpg" />
+  <meta property="og:image:width" content="228" />
+  <meta property="og:image:height" content="228" />
+  <meta property="og:image:alt" content="Sean P. Sullivan, Las Vegas record sealing attorney" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="https://www.lasvegasrecordsealing.com/images/sean-sullivan-las-vegas-record-sealing-attorney.jpg" />
+
+  <!-- Schema.org: attorney -->
+  <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Sean P. Sullivan",
+    "honorificSuffix": "Esq.",
+    "jobTitle": "Partner Attorney",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Las Vegas",
+      "addressRegion": "NV",
+      "addressCountry": "US"
+    },
+    "image": "https://www.lasvegasrecordsealing.com/images/sean-sullivan-las-vegas-record-sealing-attorney.jpg",
+    "url": "https://www.lasvegasrecordsealing.com/seansullivan.html",
+    "worksFor": {
+      "@type": "LegalService",
+      "name": "Las Vegas Record Sealing",
+      "url": "https://www.lasvegasrecordsealing.com"
+    },
+    "knowsAbout": [
+      "Nevada criminal record sealing",
+      "Criminal defense"
+    ]
+  }
+  </script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -150,6 +184,9 @@
       gap: 4rem;
       align-items: start;
     }
+
+    /* Attorney headshot */
+    .attorney-photo { display: block; width: 100%; max-width: 200px; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); margin: 0 0 1.1rem; }
 
     /* SIDEBAR */
     .about-sidebar {
@@ -539,6 +576,10 @@
 
     <!-- SIDEBAR -->
     <div class="about-sidebar">
+      <picture>
+        <source srcset="images/sean-sullivan-las-vegas-record-sealing-attorney.webp" type="image/webp">
+        <img class="attorney-photo" src="images/sean-sullivan-las-vegas-record-sealing-attorney.jpg" alt="Sean P. Sullivan, Las Vegas record sealing attorney" width="200" height="200" fetchpriority="high" decoding="async">
+      </picture>
       <p class="attorney-name">Sean P. Sullivan, Esq.</p>
       <p class="attorney-title">Partner Attorney</p>
       <ul class="credential-list">

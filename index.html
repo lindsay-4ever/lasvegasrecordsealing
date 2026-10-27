@@ -423,6 +423,8 @@
       border-radius: 4px;
     }
 
+    .team-photo { display: block; width: 120px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 1rem; }
+
     .team-role {
       font-family: 'Arial', sans-serif;
       font-size: 0.7rem;
@@ -836,11 +838,19 @@
     <h2>Meet Our Team</h2>
     <div class="team-grid">
       <div class="team-card">
+        <picture>
+          <source srcset="images/kenneth-stover-nevada-record-sealing-attorney.webp" type="image/webp">
+          <img class="team-photo" src="images/kenneth-stover-nevada-record-sealing-attorney.jpg" alt="Kenneth A. Stover, Nevada record sealing attorney" width="120" height="120" loading="lazy" decoding="async">
+        </picture>
         <p class="team-role">Founder &amp; Director</p>
         <p class="team-name">Kenneth A. Stover, Esq.</p>
         <a href="ken-stover.html" class="team-link">Full Bio →</a>
       </div>
       <div class="team-card">
+        <picture>
+          <source srcset="images/sean-sullivan-las-vegas-record-sealing-attorney.webp" type="image/webp">
+          <img class="team-photo" src="images/sean-sullivan-las-vegas-record-sealing-attorney.jpg" alt="Sean P. Sullivan, Las Vegas record sealing attorney" width="120" height="120" loading="lazy" decoding="async">
+        </picture>
         <p class="team-role">Partner Attorney</p>
         <p class="team-name">Sean P. Sullivan, Esq.</p>
         <a href="seansullivan.html" class="team-link">Full Bio →</a>
