@@ -171,6 +171,10 @@
     textarea{ resize:vertical; min-height:70px; }
     .inline-check{ display:flex; align-items:center; gap:8px; margin-top:10px; font-size:13.5px; color:var(--muted); }
 
+    .field-error{ display:flex; align-items:flex-start; gap:7px; margin:7px 0 4px; font-size:14px; line-height:1.4; font-family:Arial, sans-serif; color:var(--flag-red); }
+    .field-error::before{ content:"!"; flex-shrink:0; width:17px; height:17px; margin-top:1px; border-radius:50%; background:var(--flag-red); color:#fff; font-size:12px; font-weight:bold; line-height:17px; text-align:center; }
+    [aria-invalid="true"]{ border-color:var(--flag-red) !important; }
+    .options[data-invalid] .option{ border-color:var(--flag-red); }
     .consent{ display:flex; gap:10px; align-items:flex-start; margin-top:14px; font-size:13px; color:var(--muted); }
     .consent input{ margin-top:3px; flex-shrink:0; }
 
@@ -639,11 +643,13 @@ const STEP_NAMES = {
 
 // ── NAVIGATION ─────────────────────────────────────────────────────────────
 function go(toStep) {
+  clearErrors();
   navHistory.push(currentStep);
   currentStep = toStep;
   render();
 }
 function goBack() {
+  clearErrors();
   if (!navHistory.length) return;
   const prev = navHistory.pop();
   // Reset charge search state when returning to charge steps
@@ -834,43 +840,88 @@ function calcWaitPeriod() {
 }
 
 // ── VALIDATION ──────────────────────────────────────────────────────────────
+// Inline error messages (instead of pop-ups): shown under the field that needs fixing
+function clearErrors() {
+  document.querySelectorAll('.field-error').forEach(e => e.remove());
+  document.querySelectorAll('[aria-invalid="true"]').forEach(el => {
+    el.removeAttribute('aria-invalid');
+    const prev = el.dataset.prevDescribedby;
+    if (prev) el.setAttribute('aria-describedby', prev); else el.removeAttribute('aria-describedby');
+    delete el.dataset.prevDescribedby;
+  });
+  document.querySelectorAll('[data-invalid]').forEach(el => el.removeAttribute('data-invalid'));
+}
+function showError(field, after, msg) {
+  clearErrors();
+  const p = document.createElement('p');
+  p.className = 'field-error';
+  p.id = 'fieldError';
+  p.setAttribute('role', 'alert');
+  p.textContent = msg;
+  after.insertAdjacentElement('afterend', p);
+  if (field) {
+    field.dataset.prevDescribedby = field.getAttribute('aria-describedby') || '';
+    field.setAttribute('aria-describedby', (field.dataset.prevDescribedby + ' fieldError').trim());
+    field.setAttribute('aria-invalid', 'true');
+    try { field.focus({ preventScroll: true }); } catch (e) {}
+  }
+  p.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  return false;
+}
+// Remove the message as soon as the person starts fixing it
+['input', 'change'].forEach(ev => document.addEventListener(ev, e => {
+  if (e.target.closest && e.target.closest('.step') && document.querySelector('.field-error')) clearErrors();
+}));
+
 function validateCurrent() {
   const radio = (name) => document.querySelector(`input[name="${name}"]:checked`);
-  const alert2 = (msg) => { alert(msg); return false; };
+  const $ = (id) => document.getElementById(id);
+  const err = (id, msg, afterEl) => showError($(id), afterEl || $(id), msg);
 
   if (['stop','court_type','arrest','q2a','q2b','q2c','q3a','q3b','q4b','q5b','q6b'].includes(currentStep)) {
-    if (!radio(currentStep)) return alert2('Please choose an option to continue.');
+    if (!radio(currentStep)) {
+      const first = document.querySelector(`input[name="${currentStep}"]`);
+      const group = first.closest('.options') || first.closest('label').parentElement;
+      group.setAttribute('data-invalid', '');
+      return showError(first, group, 'Please choose an option to continue.');
+    }
   }
   if (currentStep === 'q4a' || currentStep === 'q5a') {
-    if (!S.selectedCharge && !S.cantFind) return alert2('Please search for your charge above, or click "I can\'t find my charge."');
+    if (!S.selectedCharge && !S.cantFind) {
+      const input = document.querySelector(`[data-step="${currentStep}"] .charge-search-input`);
+      return showError(input, input.closest('.charge-search-wrap'), 'Please search for your charge and select it from the list, or click "I can\'t find my charge."');
+    }
   }
   if (currentStep === 'q6a') {
     const unsure = document.getElementById('convictionUnsure').checked;
     if (!unsure && !document.getElementById('convictionDate').value)
-      return alert2('Please enter your approximate conviction date, or check "I\'m not sure."');
+      return err('convictionDate', 'Please enter your approximate conviction date, or check "I\'m not sure."', $('convictionUnsure').closest('label'));
   }
   if (currentStep === 'sentence_date') {
     const unsure = document.getElementById('completionUnsure').checked;
     if (!unsure && !document.getElementById('completionDate').value)
-      return alert2('Please enter your sentence completion date, or check "I\'m not sure."');
+      return err('completionDate', 'Please enter your sentence completion date, or check "I\'m not sure."', $('completionUnsure').closest('label'));
   }
   if (currentStep === 'contact') {
-    if (!document.getElementById('county').value) return alert2('Please select your county.');
+    if (!document.getElementById('county').value) return err('county', 'Please select the county your case was in.');
     const abroad = document.getElementById('currentState').value === 'Outside the U.S.';
-    if (!document.getElementById('currentCity').value.trim()) return alert2('Please enter the city where you live now.');
-    if (abroad && !document.getElementById('currentCountry').value) return alert2('Please select the country where you live now.');
-    if (!document.getElementById('fullName').value.trim()) return alert2('Please enter your name.');
-    if (!document.getElementById('phone').value.trim()) return alert2('Please enter your phone number.');
+    if (!document.getElementById('currentCity').value.trim()) return err('currentCity', 'Please enter the city where you live now.');
+    if (abroad && !document.getElementById('currentCountry').value) return err('currentCountry', 'Please select the country where you live now.');
+    if (!document.getElementById('fullName').value.trim()) return err('fullName', 'Please enter your full name.');
+    if (!document.getElementById('phone').value.trim()) return err('phone', 'Please enter your phone number.', $('phoneHelp'));
     const phoneDigits = document.getElementById('phone').value.replace(/\D/g, '');
     if (!abroad && !/^1?\d{10}$/.test(phoneDigits))
-      return alert2('Please enter a 10-digit phone number, e.g. (702) 555-1234.');
+      return err('phone', 'Please enter a 10-digit phone number, e.g. (702) 555-1234.', $('phoneHelp'));
     if (abroad && (phoneDigits.length < 7 || phoneDigits.length > 15))
-      return alert2('Please enter your phone number including the country code, e.g. +44 20 7946 0958.');
-    if (!document.getElementById('email').value.trim()) return alert2('Please enter your email address.');
+      return err('phone', 'Please enter your phone number including the country code, e.g. +44 20 7946 0958.', $('phoneHelp'));
+    if (!document.getElementById('email').value.trim()) return err('email', 'Please enter your email address.', $('emailHelp'));
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(document.getElementById('email').value.trim()))
-      return alert2('Please enter a complete email address, e.g. name@example.com.');
-    if (!document.querySelector('input[name="preferredContact"]:checked')) return alert2('Please select your preferred contact method.');
-    if (!document.getElementById('consent').checked) return alert2('Please check the consent box to continue.');
+      return err('email', 'Please enter a complete email address, e.g. name@example.com.', $('emailHelp'));
+    if (!document.querySelector('input[name="preferredContact"]:checked')) {
+      const first = document.querySelector('input[name="preferredContact"]');
+      return showError(first, first.closest('label').parentElement, 'Please choose how you\'d like us to contact you.');
+    }
+    if (!document.getElementById('consent').checked) return err('consent', 'Please check the box to agree to be contacted.', $('consent').closest('label'));
   }
   return true;
 }
@@ -977,7 +1028,7 @@ async function submitLead() {
     return true;
   } catch (err) {
     console.error('Lead submission failed:', err);
-    alert('Sorry — we couldn\'t send your information just now. Please check your connection and try again, or email us at info@lasvegasrecordsealing.com.');
+    showError(null, document.getElementById('consent').closest('label'), 'Sorry — we couldn\'t send your information just now. Please check your connection and try again, or email us at info@lasvegasrecordsealing.com.');
     return false;
   } finally {
     btn.disabled = false;
