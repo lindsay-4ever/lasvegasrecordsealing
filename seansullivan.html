@@ -65,6 +65,7 @@
       --navy: #0d2b4e;
       --gold: #c9a84c;
       --gold-light: #e8c96a;
+      --gold-text: #86691f;   /* deeper gold for small text on light backgrounds (WCAG AA) */
       --light-bg: #f7f8fa;
       --text: #1a1a2e;
       --muted: #5a6470;
@@ -625,6 +626,10 @@
           font-size: 0.8rem;
           color: var(--muted);
         }
+  
+    /* Accessibility: readable contrast for small text */
+    .footer-founder, .footer-disclaimer { color: rgba(255,255,255,0.6) !important; }
+    .awards-inner .section-label, .cards-inner .section-label, .attorney-title, .edu-card .year { color: var(--gold-text) !important; }
   </style>
 </head>
 <body>

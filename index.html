@@ -100,6 +100,7 @@
       --navy: #0d2b4e;
       --gold: #c9a84c;
       --gold-light: #e8c96a;
+      --gold-text: #86691f;   /* deeper gold for small text on light backgrounds (WCAG AA) */
       --light-bg: #f7f8fa;
       --text: #1a1a2e;
       --muted: #5a6470;
@@ -837,6 +838,10 @@
       section.our-team, section.faq-teaser, section.contact { padding-top: 48px; padding-bottom: 48px; }
       .team-grid { margin-top: 1.4rem; gap: 1.4rem; }
     }
+  
+    /* Accessibility: readable contrast for small text */
+    .footer-founder, .footer-disclaimer { color: rgba(255,255,255,0.6) !important; }
+    #about .section-label, #faq .section-label, .team-role { color: var(--gold-text) !important; }
   </style>
 </head>
 <body>

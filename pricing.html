@@ -36,6 +36,7 @@
       --navy: #0d2b4e;
       --gold: #c9a84c;
       --gold-light: #e8c96a;
+      --gold-text: #86691f;   /* deeper gold for small text on light backgrounds (WCAG AA) */
       --light-bg: #f7f8fa;
       --text: #1a1a2e;
       --muted: #5a6470;
@@ -449,6 +450,9 @@
       .nav-links a { padding: 0.9rem 0; display: block; font-size: 0.95rem; }
       .nav-cta { margin: 1rem 0 0.3rem; text-align: center; display: block; padding: 0.8rem 1rem !important; border-radius: 5px !important; }
     }
+  
+    /* Accessibility: readable contrast for small text */
+    .footer-founder, .footer-disclaimer { color: rgba(255,255,255,0.6) !important; }
   </style>
 </head>
 <body>
