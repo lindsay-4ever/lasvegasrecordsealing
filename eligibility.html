@@ -973,7 +973,7 @@ async function submitLead() {
     return true;
   } catch (err) {
     console.error('Lead submission failed:', err);
-    alert('Sorry — we couldn\'t send your information just now. Please check your connection and try again, or call us at (702) 815-7325.');
+    alert('Sorry — we couldn\'t send your information just now. Please check your connection and try again, or email us at info@lasvegasrecordsealing.com.');
     return false;
   } finally {
     btn.disabled = false;
@@ -996,6 +996,7 @@ function renderResult(outcome) {
         <h2>This service is for Nevada state court cases only.</h2>
         <p style="margin-top:10px;">It sounds like your case was handled in federal court or in another state. Our practice covers Nevada state court record sealing — we aren't able to assist with federal or out-of-state cases.</p>
       </div>
+      <p style="margin-top:14px; font-size:14px;">Questions? Email us at <a href="mailto:info@lasvegasrecordsealing.com" style="color:var(--navy); font-weight:bold;">info@lasvegasrecordsealing.com</a>.</p>
       <p style="font-size:13.5px; color:var(--muted); margin-top:12px;">If you answered incorrectly, you can <a href="eligibility.html" style="color:var(--navy);">start over</a>.</p>
     `;
     return;
@@ -1007,6 +1008,7 @@ function renderResult(outcome) {
         <h2>A Petition to Seal Records cannot be granted in your case.</h2>
         <p style="margin-top:10px;">Based on your answers, your conviction is among those that cannot be sealed under Nevada law.</p>
       </div>
+      <p style="margin-top:14px; font-size:14px;">Questions? Email us at <a href="mailto:info@lasvegasrecordsealing.com" style="color:var(--navy); font-weight:bold;">info@lasvegasrecordsealing.com</a>.</p>
       <p style="font-size:13.5px; color:var(--muted); margin-top:12px;">If you believe you answered a question incorrectly, you can <a href="eligibility.html" style="color:var(--navy);">start over</a>.</p>
     `;
     return;
@@ -1019,7 +1021,7 @@ function renderResult(outcome) {
         <h2>This conviction cannot be sealed under Nevada law.</h2>
         <p style="margin-top:10px;">The charge you selected — <strong>${ch ? ch.n : 'your charge'}</strong>${ch ? ` (${ch.r})` : ''} — is explicitly barred from sealing under Nevada Revised Statutes.</p>
       </div>
-      <p style="font-size:14px; margin-top:14px;">If you believe this was an error or if you have additional charges you'd like to discuss, please call our office at <a href="tel:+17028157325" style="color:var(--navy); font-weight:bold;">(702) 815-7325</a>. Our office can review your full record and advise you on your specific situation.</p>
+      <p style="font-size:14px; margin-top:14px;">If you believe this was an error or if you have additional charges you'd like to discuss, please email us at <a href="mailto:info@lasvegasrecordsealing.com" style="color:var(--navy); font-weight:bold;">info@lasvegasrecordsealing.com</a>. Our office can review your full record and advise you on your specific situation.</p>
       <p style="font-size:13.5px; color:var(--muted); margin-top:12px;">Selected the wrong charge? <a href="eligibility.html" style="color:var(--navy);">Start over</a>.</p>
     `;
     return;
@@ -1044,7 +1046,8 @@ function renderResult(outcome) {
         <div class="next-step-item"><div class="step-num">3</div><div><strong>Our office takes it from there.</strong> Once your records arrive, our attorneys prepare your Petition to Seal Records, handle the court filings, and represent you at any hearings. In most cases you won't need to appear in court — if your court requires you to attend, we'll let you know in advance.</div></div>
         <p style="margin-top:14px; font-size:14px;"><strong class="deadline-red">One deadline to keep in mind:</strong> Once you receive your State criminal history record, you have <strong class="deadline-red">30 days</strong> to file your Petition. Contact our office as soon as it arrives.</p>
       </div>
-      <p style="margin-top:18px; font-size:14px;">Watch for a call or email from our office. Want to talk sooner? Call us at <a href="tel:+17028157325" style="color:var(--navy); font-weight:bold;">(702) 815-7325</a>.</p>
+      <p style="margin-top:18px; font-size:14px;">Watch for a call or email from our office.</p>
+      <p style="margin-top:18px; font-size:14px;">Questions in the meantime? Email us at <a href="mailto:info@lasvegasrecordsealing.com" style="color:var(--navy); font-weight:bold;">info@lasvegasrecordsealing.com</a>.</p>
       <p class="disclaimer">This is an informational estimate based on the answers you provided. Eligibility is determined by an attorney after reviewing your verified State criminal record. Results do not constitute legal advice.</p>
     `;
     return;
@@ -1084,7 +1087,8 @@ function renderResult(outcome) {
       <h2>Your case needs a personal review from our office.</h2>
       <p style="margin-top:10px;">${msg}</p>
     </div>
-    <p style="font-size:14px; margin-top:12px;">Someone from our office will reach out to discuss your case. You can also call us directly at <a href="tel:+17028157325" style="color:var(--navy); font-weight:bold;">(702) 815-7325</a>.</p>
+    <p style="font-size:14px; margin-top:12px;">Someone from our office will reach out to discuss your case.</p>
+    <p style="margin-top:18px; font-size:14px;">Questions in the meantime? Email us at <a href="mailto:info@lasvegasrecordsealing.com" style="color:var(--navy); font-weight:bold;">info@lasvegasrecordsealing.com</a>.</p>
     <p class="disclaimer">Submitting this form does not create an attorney-client relationship. Information on this site does not constitute legal advice.</p>
   `;
 }
