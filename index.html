@@ -792,6 +792,9 @@
       .hero-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 4rem; align-items: center; max-width: 1140px; width: 100%; margin: 0 auto; text-align: left; }
       .hero-copy h1, .hero-copy p { margin-left: 0; margin-right: 0; }
       .hero-copy .hero-cta-group { justify-content: flex-start; }
+      .hero-cta-wrap { display: inline-flex; flex-direction: column; align-items: stretch; }
+      .hero-cta-wrap .btn-primary--hero { flex: 1; text-align: center; }
+      .hero-cta-wrap .hero-sub-cta { margin-bottom: 0; white-space: nowrap; }
       .hero-steps { display: block; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-top: 3px solid var(--gold); border-radius: 8px; padding: 1.8rem 1.8rem 1.2rem; }
       .hs-label { font-family: Arial, sans-serif; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold) !important; margin: 0 0 1.2rem !important; }
       .hero-steps ol { list-style: none; margin: 0; padding: 0; }
@@ -834,10 +837,12 @@
   <p class="section-label">Las Vegas · Clark County · Southern Nevada</p>
   <h1>Seal Your Nevada Criminal Record. Start Fresh.</h1>
   <p>We connect people arrested in Las Vegas with experienced Nevada record sealing attorneys who handle the entire process — from eligibility review to court filing — so you can focus on your future, not your past.</p>
+  <div class="hero-cta-wrap">
   <div class="hero-cta-group">
     <a href="eligibility.html" class="btn-primary btn-primary--hero">Check Your Eligibility for Free →</a>
   </div>
   <p class="hero-sub-cta">Just a few minutes &nbsp;·&nbsp; No obligation &nbsp;·&nbsp; Strictly confidential</p>
+  </div>
   </div>
   <aside class="hero-steps" aria-label="How it works">
     <p class="hs-label">How It Works</p>
