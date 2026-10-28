@@ -994,6 +994,14 @@ function contactLine(intro) {
   return `${intro} will call you to discuss your case.`;
 }
 
+// Waiting page: how the office will reach out near the eligibility date
+function waitReach() {
+  const m = S.preferredContact;
+  if (m === 'text')  return "we'll text you to schedule a call";
+  if (m === 'email') return "we'll email you to schedule a call";
+  return "we'll call you";
+}
+
 function renderResult(outcome) {
   const el = document.getElementById('resultOutput');
   const name = S.fullName ? `, ${S.fullName.split(' ')[0]}` : '';
@@ -1071,7 +1079,7 @@ function renderResult(outcome) {
       <div class="next-steps">
         <h3>Here's what happens next:</h3>
         <div class="next-step-item"><div class="step-num">1</div><div><strong>Your eligibility date is saved.</strong> We've noted that you appear to become eligible around <strong>${fmtDate(eligible)}</strong>.</div></div>
-        <div class="next-step-item"><div class="step-num">2</div><div><strong>We'll reach out as your eligibility date gets close</strong> to go over your case and confirm that you're eligible. Once we've confirmed it, we'll send your Sealing Record Packet, which explains how and when to order the records needed for your petition.</div></div>
+        <div class="next-step-item"><div class="step-num">2</div><div><strong>As your eligibility date gets close,</strong> ${waitReach()} to go over your case and confirm that you're eligible. Once we've confirmed it, we'll send your Sealing Record Packet, which explains how and when to order the records needed for your petition.</div></div>
         <div class="next-step-item"><div class="step-num">3</div><div><strong>Our office takes it from there.</strong> Once you're eligible and your records are in hand, our attorneys prepare and file your petition and handle the court process. In most cases, you won't need to appear in court.</div></div>
       </div>
       <p style="margin-top:18px; font-size:14px;">Questions in the meantime? Email us at <a href="mailto:info@lasvegasrecordsealing.com" style="color:var(--navy); font-weight:bold;">info@lasvegasrecordsealing.com</a>.</p>
