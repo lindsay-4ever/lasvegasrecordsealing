@@ -477,8 +477,11 @@
     <div class="step" data-step="sentence_date">
       <div class="q-title">When did you complete your sentence?</div>
       <div class="q-help">Use the date your probation or parole ended, or when you made your final payment — whichever was latest. The waiting period runs from this date, not from your arrest or conviction.</div>
-      <label class="field-label" for="completionDate">Sentence completion date</label>
-      <input type="date" id="completionDate" name="completionDate">
+      <label class="field-label" id="completionDateLabel">Sentence completion date</label>
+      <div class="date-row" role="group" aria-labelledby="completionDateLabel">
+        <select id="completionMonth" aria-label="Month"><option value="">Month</option><option value="01">January</option><option value="02">February</option><option value="03">March</option><option value="04">April</option><option value="05">May</option><option value="06">June</option><option value="07">July</option><option value="08">August</option><option value="09">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option></select>
+        <select id="completionYear" aria-label="Year"><option value="">Year</option></select>
+      </div>
       <label class="inline-check"><input type="checkbox" id="completionUnsure"> I'm not sure of the exact date</label>
       <div id="waitPreview" style="margin-top:14px; font-size:13.5px; color:var(--muted); display:none;"></div>
     </div>
@@ -884,10 +887,23 @@ function convictionDateValue() {
   const m = document.getElementById('convictionMonth').value;
   return y ? (m ? `${y}-${m}` : y) : '';
 }
-(function fillConvictionYears() {
-  const sel = document.getElementById('convictionYear');
-  for (let y = new Date().getFullYear(); y >= 1960; y--) sel.add(new Option(y, y));
+(function fillYears() {
+  ['convictionYear', 'completionYear'].forEach(id => {
+    const sel = document.getElementById(id);
+    for (let y = new Date().getFullYear(); y >= 1960; y--) sel.add(new Option(y, y));
+  });
 })();
+
+// Sentence completion: month + year dropdowns. Counted from the LAST day of that
+// month, so the form never says someone is eligible earlier than they are.
+// Returns "YYYY-MM-DD", or '' if either dropdown is empty.
+function completionISO() {
+  const y = +document.getElementById('completionYear').value;
+  const m = +document.getElementById('completionMonth').value;
+  if (!y || !m) return '';
+  const last = new Date(y, m, 0).getDate();
+  return `${y}-${String(m).padStart(2, '0')}-${String(last).padStart(2, '0')}`;
+}
 
 function validateCurrent() {
   const radio = (name) => document.querySelector(`input[name="${name}"]:checked`);
@@ -915,8 +931,12 @@ function validateCurrent() {
   }
   if (currentStep === 'sentence_date') {
     const unsure = document.getElementById('completionUnsure').checked;
-    if (!unsure && !document.getElementById('completionDate').value)
-      return err('completionDate', 'Please enter your sentence completion date, or check "I\'m not sure."', $('completionUnsure').closest('label'));
+    if (!unsure && !$('completionMonth').value && !$('completionYear').value)
+      return err('completionMonth', 'Please choose the month and year you completed your sentence, or check "I\'m not sure."', $('completionUnsure').closest('label'));
+    if (!unsure && !$('completionMonth').value)
+      return err('completionMonth', 'Please choose the month too. Your best guess is fine.', $('completionUnsure').closest('label'));
+    if (!unsure && !$('completionYear').value)
+      return err('completionYear', 'Please choose the year too.', $('completionUnsure').closest('label'));
   }
   if (currentStep === 'contact') {
     if (!document.getElementById('county').value) return err('county', 'Please select the county your case was in.');
@@ -955,7 +975,8 @@ function capture() {
   }
   if (currentStep === 'sentence_date') {
     S.completionUnsure = document.getElementById('completionUnsure').checked;
-    S.completionDate = S.completionUnsure ? '' : document.getElementById('completionDate').value;
+    S.completionDate = S.completionUnsure ? '' : completionISO();
+    S.completionMonth = S.completionUnsure ? '' : `${document.getElementById('completionYear').value}-${document.getElementById('completionMonth').value}`;
   }
   if (currentStep === 'contact') {
     S.county = document.getElementById('county').value;
@@ -1277,7 +1298,7 @@ function setCantFind(step) {
 function updateWaitPreview() {
   if (currentStep !== 'sentence_date') return;
   const w = S.convictionType ? WAIT[S.convictionType] : null;
-  const dateVal = document.getElementById('completionDate').value;
+  const dateVal = completionISO();
   const unsure = document.getElementById('completionUnsure').checked;
   const preview = document.getElementById('waitPreview');
   if (!w || unsure || !dateVal) { preview.style.display = 'none'; return; }
@@ -1355,10 +1376,10 @@ document.addEventListener('change', e => {
     ['convictionMonth', 'convictionYear'].forEach(id => document.getElementById(id).disabled = e.target.checked);
   }
   if (e.target.id === 'completionUnsure') {
-    document.getElementById('completionDate').disabled = e.target.checked;
+    ['completionMonth', 'completionYear'].forEach(id => document.getElementById(id).disabled = e.target.checked);
     updateWaitPreview();
   }
-  if (e.target.id === 'completionDate') updateWaitPreview();
+  if (e.target.id === 'completionMonth' || e.target.id === 'completionYear') updateWaitPreview();
 });
 
 // Nav hamburger
