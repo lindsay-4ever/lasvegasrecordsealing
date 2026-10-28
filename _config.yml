@@ -1,0 +1,5 @@
+# GitHub Pages settings.
+# Keep the database setup files (SQL, staff notes, setup guide) off the public website.
+exclude:
+  - supabase
+  - README.md
