@@ -1042,6 +1042,14 @@ function fmtDate(d) {
 }
 
 // How the office will follow up, based on the visitor's preferred contact method (no personal details shown)
+// Good News page, step 1: how the office will reach out
+function firstContact() {
+  const m = S.preferredContact;
+  if (m === 'text')  return "Our office will text you to schedule a call";
+  if (m === 'email') return "Our office will email you to schedule a call";
+  return "Our office will call you";
+}
+
 function contactLine(intro) {
   const m = S.preferredContact;
   if (m === 'text')  return `${intro} will text you to schedule a time to talk.`;
@@ -1112,12 +1120,11 @@ function renderResult(outcome) {
       </div>
       <div class="next-steps">
         <h3>Here's how it works from here:</h3>
-        <div class="next-step-item"><div class="step-num">1</div><div><strong>We'll contact you first.</strong> Our office will reach out to go over your case and ask a few questions, so we can confirm your situation before anything else.</div></div>
+        <div class="next-step-item"><div class="step-num">1</div><div><strong>We'll contact you first.</strong> ${firstContact()} to go over your case and ask a few questions, so we can confirm your situation before anything else.</div></div>
         <div class="next-step-item"><div class="step-num">2</div><div><strong>Then we'll send your Sealing Record Packet.</strong> If your case looks like a fit, we'll email you a packet explaining how to order your official State and Federal criminal history records. This is the one step you handle directly, since Nevada law requires you to request your own records.</div></div>
         <div class="next-step-item"><div class="step-num">3</div><div><strong>Our office takes it from there.</strong> Once your records arrive, our attorneys prepare your Petition to Seal Records, handle the court filings, and represent you at any hearings. In most cases you won't need to appear in court — if your court requires you to attend, we'll let you know in advance.</div></div>
         <p style="margin-top:14px; font-size:14px;"><strong class="deadline-red">One deadline to keep in mind:</strong> Once you receive your State criminal history record, you have <strong class="deadline-red">30 days</strong> to file your Petition. Contact our office as soon as it arrives.</p>
       </div>
-      <p style="margin-top:18px; font-size:14px;">${contactLine("Our office")}</p>
       <p style="margin-top:18px; font-size:14px;">Questions in the meantime? Email us at <a href="mailto:info@lasvegasrecordsealing.com" style="color:var(--navy); font-weight:bold;">info@lasvegasrecordsealing.com</a>.</p>
       <p class="disclaimer">This is an informational estimate based on the answers you provided. Eligibility is determined by an attorney after reviewing your verified State criminal record. Results do not constitute legal advice.</p>
     `;
