@@ -783,6 +783,31 @@
       .nav-cta { margin: 1rem 0 0.3rem; text-align: center; display: block; padding: 0.8rem 1rem !important; border-radius: 5px !important; }
       .team-grid { grid-template-columns: 1fr; }
     }
+
+    /* ===== DESKTOP MOCKUP ===== */
+    .hero-steps { display: none; }
+    .team-cred { font-family: Arial, sans-serif; font-size: 0.85rem; color: var(--muted); margin: -0.4rem 2rem 0.9rem; line-height: 1.5; }
+    @media (min-width: 1024px) {
+      .hero { min-height: 640px; padding-top: 128px; padding-bottom: 64px; }
+      .hero-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 4rem; align-items: center; max-width: 1140px; width: 100%; margin: 0 auto; text-align: left; }
+      .hero-copy h1, .hero-copy p { margin-left: 0; margin-right: 0; }
+      .hero-copy .hero-cta-group { justify-content: flex-start; }
+      .hero-steps { display: block; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-top: 3px solid var(--gold); border-radius: 8px; padding: 1.8rem 1.8rem 1.2rem; }
+      .hs-label { font-family: Arial, sans-serif; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold) !important; margin: 0 0 1.2rem !important; }
+      .hero-steps ol { list-style: none; margin: 0; padding: 0; }
+      .hero-steps li { display: flex; gap: 1rem; align-items: flex-start; padding: 0.9rem 0; border-top: 1px solid rgba(255,255,255,0.1); }
+      .hero-steps li:first-child { border-top: none; padding-top: 0; }
+      .hs-num { flex: 0 0 34px; height: 34px; border-radius: 50%; background: var(--gold); color: var(--navy); font: bold 0.95rem Arial, sans-serif; display: flex; align-items: center; justify-content: center; }
+      .hero-steps strong { display: block; font-family: Georgia, serif; font-size: 1.05rem; color: #fff; margin-bottom: 0.2rem; }
+      .hero-steps li span:not(.hs-num) { display: block; font-family: Arial, sans-serif; font-size: 0.9rem; color: #b8c8d8; line-height: 1.5; }
+      .section-inner { max-width: 1120px; }
+      .faq-items { display: grid; grid-template-columns: 1fr 1fr; gap: 0 3rem; }
+    }
+
+    @media (max-width: 768px) {
+      section.our-team, section.faq-teaser, section.contact { padding-top: 48px; padding-bottom: 48px; }
+      .team-grid { margin-top: 1.4rem; gap: 1.4rem; }
+    }
   </style>
 </head>
 <body>
@@ -804,6 +829,8 @@
 
 <!-- HERO -->
 <section class="hero">
+ <div class="hero-grid">
+  <div class="hero-copy">
   <p class="section-label">Las Vegas · Clark County · Southern Nevada</p>
   <h1>Seal Your Nevada Criminal Record. Start Fresh.</h1>
   <p>We connect people arrested in Las Vegas with experienced Nevada record sealing attorneys who handle the entire process — from eligibility review to court filing — so you can focus on your future, not your past.</p>
@@ -811,6 +838,16 @@
     <a href="eligibility.html" class="btn-primary btn-primary--hero">Check Your Eligibility for Free →</a>
   </div>
   <p class="hero-sub-cta">Just a few minutes &nbsp;·&nbsp; No obligation &nbsp;·&nbsp; Strictly confidential</p>
+  </div>
+  <aside class="hero-steps" aria-label="How it works">
+    <p class="hs-label">How It Works</p>
+    <ol>
+      <li><span class="hs-num">1</span><div><strong>Check your eligibility</strong><span>Answer a few questions online — it takes just a few minutes.</span></div></li>
+      <li><span class="hs-num">2</span><div><strong>We contact you</strong><span>Our office reviews your answers and walks you through ordering your records.</span></div></li>
+      <li><span class="hs-num">3</span><div><strong>We file your petition</strong><span>Our attorneys prepare and file everything and represent you in court.</span></div></li>
+    </ol>
+  </aside>
+ </div>
 </section>
 
 
@@ -853,6 +890,7 @@
         </picture>
         <p class="team-role">Founder &amp; Director</p>
         <p class="team-name">Kenneth A. Stover, Esq.</p>
+        <p class="team-cred">30 years of Nevada criminal defense · Former Deputy District Attorney</p>
         <a href="ken-stover.html" class="team-link">Full Bio →</a>
       </div>
       <div class="team-card">
@@ -862,6 +900,7 @@
         </picture>
         <p class="team-role">Partner Attorney</p>
         <p class="team-name">Sean P. Sullivan, Esq.</p>
+        <p class="team-cred">Nevada criminal defense attorney since 1993 · Las Vegas</p>
         <a href="seansullivan.html" class="team-link">Full Bio →</a>
       </div>
     </div>
@@ -898,9 +937,8 @@
     <p>Fill out the free qualification form and our team will review your situation and reach out — no obligation, completely free.</p>
 
     <div class="form-cta-box">
-      <h3>Free Eligibility Check</h3>
       <p>Tell us about your record and we'll let you know whether you qualify, what the timeline looks like, and what it would cost.</p>
-      <a href="eligibility.html" style="display:inline-block; background:var(--navy); color:#fff; padding:1rem 2rem; border-radius:6px; font-family:Arial,sans-serif; font-weight:bold; font-size:1rem; text-decoration:none;">Fill Out the Free Qualification Form →</a>
+      <a href="eligibility.html" style="display:inline-block; background:var(--gold); color:var(--navy); padding:1rem 2rem; border-radius:6px; font-family:Arial,sans-serif; font-weight:bold; font-size:1rem; text-decoration:none;">Fill Out the Free Qualification Form →</a>
       <p class="form-privacy" style="margin-top:1.2rem;">🔒 Your information is kept strictly confidential.</p>
     </div>
 
