@@ -52,3 +52,6 @@ These rows link real people to criminal-record details. Turn on two-factor login
 ## Reusing for nevadasealingrecords.com
 
 The table already accepts `site = 'nevadasealingrecords'`. Copy the same submit code into that site's form and set `LEAD_SITE = 'nevadasealingrecords'`.
+
+## Eligibility reminders (not eligible yet)
+Run `10_eligibility_reminder.sql` once. Every "waiting" lead gets `eligibility_reminder = true` automatically. **Table Editor → upcoming_eligibility** lists everyone eligible within the next 60 days, soonest first, plus anyone whose date has passed and is still "new". Change a lead's status to "contacted" to take them off the list, or untick `eligibility_reminder` if they ask not to be reminded.
