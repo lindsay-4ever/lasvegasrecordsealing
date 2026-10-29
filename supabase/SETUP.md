@@ -67,7 +67,7 @@ The form sends leads to the `submit-lead` Edge Function instead of writing to th
 
 Order matters. Do these in sequence so the form never stops saving leads:
 1. **SQL Editor:** run `12_submit_lead_function.sql` (adds the rate-limit table).
-2. **Edge Functions → Deploy a new function → Via editor:** name it `submit-lead`, paste `functions/submit-lead/index.ts`, deploy. Then open the function's settings and turn **off** "Verify JWT" (Enforce JWT verification).
+2. **Edge Functions → Deploy a new function → Via editor:** name it `submit-lead`, paste `functions/submit-lead/index.ts`, deploy. (The deployed function shows the name `submit-lead`, but its web address is `/functions/v1/super-task`; `LEAD_ENDPOINT` in `eligibility.html` must match the address shown in Edge Functions.) Then open the function's settings and turn **off** "Verify JWT" (Enforce JWT verification).
 3. **Edge Functions → Secrets:** add `TURNSTILE_SECRET_KEY` = the secret key from Cloudflare → Turnstile → the widget.
 4. Publish the website (the form now posts to the function), submit a test lead, check it appears in `leads`, then delete it.
 5. **SQL Editor:** run `13_close_direct_inserts.sql`. After this the website can no longer write to `leads` directly; only the function can.

@@ -640,7 +640,8 @@ const CHARGES = [{"n":"DUI — Third Offense Within 7 Years (Felony)","r":"NRS 4
 // saving. No database key is needed in this page. NEVER paste the Turnstile
 // secret key or any Supabase secret / service_role key here.
 const SUPABASE_URL = 'https://ubtmdxknrhdeqtixhyri.supabase.co';
-const LEAD_ENDPOINT = SUPABASE_URL + '/functions/v1/submit-lead';
+// The function is named submit-lead in the dashboard; its web address is /super-task.
+const LEAD_ENDPOINT = SUPABASE_URL + '/functions/v1/super-task';
 // Turnstile site key (public): Cloudflare → Turnstile → this widget
 const TURNSTILE_SITE_KEY = '0x4AAAAAAFqpaMGpf8YwsPue';
 const LEAD_SITE = 'lasvegasrecordsealing';
