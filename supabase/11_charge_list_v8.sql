@@ -123,8 +123,6 @@ insert into public.charge_special_cases (charge_name, staff_note) values
    'Law changed July 1, 2019 (AB 60): before then a third offense was a gross misdemeanor (2 years). If the offense was earlier, the attorney sets the class and wait from the law in effect then. (Checked against the 2019 Statutes of Nevada: AB 60, ch. 308, effective July 1, 2019.)'),
   ('Under the Influence of Controlled Substance',
    'Law changed July 1, 2020 (AB 236): before then it was a Category E felony, or a gross misdemeanor for a Schedule V substance (2 years either way). If the offense was earlier, the attorney sets the class and wait from the law in effect then. (Checked against the 2019 Statutes of Nevada: AB 236, ch. 633, sec. 137 — effective July 1, 2020.)'),
-  ('Possession of Marijuana — 1 Ounce or Less',
-   'Law changed October 1, 2021 (AB 158, 2021): before then a third offense was a gross misdemeanor and a fourth or later offense a Category E felony (2 years either way), and the no-hearing sealing now in NRS 453.336(8) did not exist. The new rules apply to offenses committed on or after October 1, 2021 and to earlier offenses sentenced on or after that date. If sentenced earlier, the attorney sets the class and wait from the law in effect then.'),
   ('Theft (Including Theft of Services) — Under $650 (Offense Committed October 1, 2011 – June 30, 2020)',
    'Offense date matters: tiers and thresholds were different then. Attorney reviews the court record (amount and offense date) to set the class and wait.'),
   ('Theft (Including Theft of Services) — $650 to $3,499 (Offense Committed October 1, 2011 – June 30, 2020)',
@@ -173,5 +171,5 @@ revoke all on function public.leads_set_special_case() from public, anon, authen
 
 commit;
 
--- Check: should return 62
+-- Check: should return 61
 -- select count(*) from public.charge_special_cases;
