@@ -148,7 +148,7 @@ insert into public.charge_special_cases (charge_name, staff_note) values
   ('Attempt to Commit a Category E Felony (Not a Sexual Offense or Crime Against a Child)',
    'Ask about the facts: Yes if the offense attempted is on the NRS 202.876 list (item 17); otherwise No. If yes: 10 years. If no: 2 years.'),
   ('Attempt to Commit a Misdemeanor or Gross Misdemeanor (Not a Sexual Offense or Crime Against a Child)',
-   'Ask about the facts: Yes if the offense attempted is on the NRS 202.876 list (item 17), such as false imprisonment with force or a weapon; otherwise No. If yes: 10 years. If no: 1 year. An attempted gross misdemeanor carries at most about 182 days and $1,000 (NRS 193.153(1)(b)), which fits the misdemeanor definition (NRS 193.120(3)); attorney confirms (2 years if treated as a gross misdemeanor). If the offense attempted was battery, harassment, stalking or a protective-order violation, attorney confirms whether the 2-year rule in NRS 179.245(1)(f) applies.');
+   'Ask about the facts: Yes if the offense attempted is on the NRS 202.876 list (item 17), such as false imprisonment with force or a weapon; otherwise No. If yes: 10 years. If no: 1 year. If the offense attempted was battery, harassment, stalking or a protective-order violation, attorney confirms whether the 2-year rule in NRS 179.245(1)(f) applies.');
 
 create or replace function public.leads_set_special_case()
 returns trigger
