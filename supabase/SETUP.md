@@ -33,13 +33,15 @@ If the button shows an error instead, open the browser console (right-click → 
 
 ## 4. Get emailed when a lead comes in (optional, ~15 minutes)
 
-Supabase doesn't email you on its own. `supabase/functions/notify-new-lead/` sends a short alert (name, phone, county, result — **no charge details**) through Resend.
+Supabase doesn't email you on its own. `supabase/functions/notify-new-lead/` sends a short alert through Resend. The alert contains **no lead details** (no name, phone, email, charge or result), only the time and a link to Supabase, so nothing from the form passes through an email inbox.
 
-1. Sign up at resend.com, verify a sending domain (e.g. lasvegasrecordsealing.com), create an API key.
-2. Supabase → **Edge Functions → Deploy a new function → Via editor**, name it `notify-new-lead`, paste `index.ts`, deploy. **Turn off "Verify JWT"** for this function (the webhook uses its own secret instead).
-3. **Edge Functions → Secrets**: add `RESEND_API_KEY`, `NOTIFY_TO`, `NOTIFY_FROM`, `WEBHOOK_SECRET` (any long random string).
-4. **Database → Webhooks → Create**: table `leads`, event **Insert**, type **Supabase Edge Functions**, function `notify-new-lead`, add HTTP header `x-webhook-secret` = the same random string.
-5. Submit another test lead — the email should arrive within seconds.
+1. Sign up at resend.com with the email address that should get the alerts, and create an API key. No domain is needed yet: until you verify one, Resend can send from `onboarding@resend.dev`, but only to the address you signed up with.
+2. Supabase → **Edge Functions → Deploy a new function → Via editor**, paste `index.ts`, deploy. Turn **off** "Verify JWT" for this function (the webhook uses its own secret instead).
+3. **Edge Functions → Secrets**: add `RESEND_API_KEY`, `NOTIFY_TO` (your Resend sign-up email), `NOTIFY_FROM` = `Las Vegas Record Sealing <onboarding@resend.dev>`, and `WEBHOOK_SECRET` (any long random string, e.g. from a password generator).
+4. **Database → Webhooks → Create**: table `leads`, event **Insert**, type **Supabase Edge Functions**, pick this function, method POST, and add the HTTP header `x-webhook-secret` = the same random string.
+5. Submit a test lead; the email should arrive within a minute. Delete the test row.
+
+Later, once the business email exists: verify lasvegasrecordsealing.com in Resend (it gives DNS records to add at Network Solutions), then change `NOTIFY_FROM` to e.g. `leads@lasvegasrecordsealing.com` and add other recipients to `NOTIFY_TO`.
 
 ## Working the leads
 
