@@ -23,7 +23,8 @@
 //   - Turn OFF "Verify JWT" for this function (the form has no login; this
 //     function does its own checks).
 //   - Secrets: TURNSTILE_SECRET_KEY = the secret key from the Cloudflare
-//     Turnstile widget. SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are
+//     Turnstile widget. SUPABASE_URL and the server key (SUPABASE_SECRET_KEYS
+//     on newer projects, SUPABASE_SERVICE_ROLE_KEY on older ones) are
 //     provided by Supabase automatically.
 //
 // Nothing from the form is sent anywhere except this database. Cloudflare only
@@ -146,6 +147,20 @@ export function clientIp(h: Headers): { ip: string; source: string } {
   return { ip: "", source: "none" };
 }
 
+// The server's own database key. Newer projects provide SUPABASE_SECRET_KEYS
+// (a JSON list of sb_secret_ keys); older ones provide SUPABASE_SERVICE_ROLE_KEY.
+export function serverKey(env: (k: string) => string | undefined): string | undefined {
+  const json = env("SUPABASE_SECRET_KEYS");
+  if (json) {
+    try {
+      const keys = JSON.parse(json) as Record<string, string>;
+      const k = keys["default"] ?? Object.values(keys)[0];
+      if (typeof k === "string" && k) return k;
+    } catch { /* fall through to the legacy key */ }
+  }
+  return env("SUPABASE_SERVICE_ROLE_KEY") || undefined;
+}
+
 function dbHeaders(key: string): Record<string, string> {
   const h: Record<string, string> = { "apikey": key, "Content-Type": "application/json" };
   if (!key.startsWith("sb_")) h["Authorization"] = `Bearer ${key}`; // legacy JWT keys
@@ -202,7 +217,7 @@ export async function handle(req: Request, env: (k: string) => string | undefine
   }
 
   const url = env("SUPABASE_URL");
-  const key = env("SUPABASE_SERVICE_ROLE_KEY");
+  const key = serverKey(env);
   if (!url || !key) { console.error("Supabase URL or key missing"); return reply(500, { error: "server_error" }, origin); }
 
   // 4 + save: rate limit and insert in one database call (hashed IP; the
