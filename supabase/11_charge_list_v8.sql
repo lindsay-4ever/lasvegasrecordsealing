@@ -95,8 +95,6 @@ insert into public.charge_special_cases (charge_name, staff_note) values
    'Offense date matters: tiers and thresholds were different then. Attorney reviews the court record (amount and offense date) to set the class and wait.'),
   ('Bad Check (Offense Committed Before October 1, 2011)',
    'Offense date matters: tiers and thresholds were different then. Attorney reviews the court record (amount and offense date) to set the class and wait.'),
-  ('Conspiracy to Commit Sex Trafficking of a Child',
-   'Attorney decides whether this conspiracy counts as a crime against a child (NRS 179D.0357(4)). If it does, it cannot be sealed; if not, 5 years under Ken''s conspiracy answer.'),
   ('Possession of a Controlled Substance — Second Offense, Only 1 Prior Drug Conviction (Under 14 Grams Schedule I/II or Under 28 Grams Schedule III–V)',
    'Law changed July 1, 2020 (AB 236): before then, a second offense involving a Schedule V substance was a Category D felony (5 years). If the offense was earlier, the attorney sets the class and wait from the law in effect then. (Checked against the 2019 Statutes of Nevada: AB 236, ch. 633, sec. 137 — effective July 1, 2020.)'),
   ('Low-Level Possession of a Controlled Substance (14 to Under 28 Grams Schedule I/II, or 28 to Under 200 Grams Schedule III–V)',
@@ -177,5 +175,5 @@ revoke all on function public.leads_set_special_case() from public, anon, authen
 
 commit;
 
--- Check: should return 64
+-- Check: should return 63
 -- select count(*) from public.charge_special_cases;
