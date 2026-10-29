@@ -121,8 +121,6 @@ insert into public.charge_special_cases (charge_name, staff_note) values
    'Ask about the facts: Yes if a deadly weapon was used (NRS 202.876 item 10); otherwise No. If yes: 10 years. If no: 5 years.'),
   ('Stalking — Third or Subsequent Offense (Felony)',
    'Law changed July 1, 2019 (AB 60): before then a third offense was a gross misdemeanor (2 years). If the offense was earlier, the attorney sets the class and wait from the law in effect then. (Checked against the 2019 Statutes of Nevada: AB 60, ch. 308, effective July 1, 2019.)'),
-  ('DUI — After a Prior Felony DUI (Felony)',
-   'NRS 179.245(6) does not list NRS 484C.410, so by statute this is sealable after 5 years (Category B). Ken to confirm whether to treat it as not sealable like other felony DUIs.'),
   ('Under the Influence of Controlled Substance',
    'Law changed July 1, 2020 (AB 236): before then it was a Category E felony, or a gross misdemeanor for a Schedule V substance (2 years either way). If the offense was earlier, the attorney sets the class and wait from the law in effect then. (Checked against the 2019 Statutes of Nevada: AB 236, ch. 633, sec. 137 — effective July 1, 2020.)'),
   ('Possession of Marijuana — 1 Ounce or Less',
@@ -175,5 +173,5 @@ revoke all on function public.leads_set_special_case() from public, anon, authen
 
 commit;
 
--- Check: should return 63
+-- Check: should return 62
 -- select count(*) from public.charge_special_cases;
