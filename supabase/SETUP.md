@@ -61,3 +61,15 @@ Every page has a Content-Security-Policy tag near the top of its `<head>`. It on
 
 ## Charge list v8 (special cases)
 Run `11_charge_list_v8.sql` once after the v8 charge list goes live. It replaces the special-case charges in `charge_special_cases` (the old names no longer exist) with the 60 from the v8 charge sheet, each with a staff note. Some charges are special cases only if the offense happened before a certain date; for those, the form asks when the offense happened, and a lead is flagged `special_case` only when the form actually treated it as one.
+
+## Spam protection (Cloudflare Turnstile + submit-lead function)
+The form sends leads to the `submit-lead` Edge Function instead of writing to the database directly. The function rejects anything over 32 KB, re-checks every field, verifies the Cloudflare Turnstile spam check, allows at most 5 submissions per hour and 20 per day from one connection (only a hashed IP is kept, for 2 days), and then saves the lead. Cloudflare only sees the Turnstile token and IP address, never the form answers.
+
+Order matters. Do these in sequence so the form never stops saving leads:
+1. **SQL Editor:** run `12_submit_lead_function.sql` (adds the rate-limit table).
+2. **Edge Functions → Deploy a new function → Via editor:** name it `submit-lead`, paste `functions/submit-lead/index.ts`, deploy. Then open the function's settings and turn **off** "Verify JWT" (Enforce JWT verification).
+3. **Edge Functions → Secrets:** add `TURNSTILE_SECRET_KEY` = the secret key from Cloudflare → Turnstile → the widget.
+4. Publish the website (the form now posts to the function), submit a test lead, check it appears in `leads`, then delete it.
+5. **SQL Editor:** run `13_close_direct_inserts.sql`. After this the website can no longer write to `leads` directly; only the function can.
+
+Turnstile widget (Cloudflare → Application security → Turnstile): hostnames `lindsay-4ever.github.io` and `lasvegasrecordsealing.com`, mode Managed. The site key is in `eligibility.html` (`TURNSTILE_SITE_KEY`); the secret key goes only in Supabase.
