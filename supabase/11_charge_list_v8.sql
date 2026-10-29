@@ -39,8 +39,6 @@ insert into public.charge_special_cases (charge_name, staff_note) values
    'Law changed July 1, 2020 (AB 236): before then, trafficking tiers started at 4 grams, and 28 grams or more of a Schedule I substance was a Category A felony (10 years). If the offense was earlier, the attorney sets the class and wait from the law in effect then. (Checked against the 2019 Statutes of Nevada, AB 236.)'),
   ('Burglary (Offense Committed Before July 1, 2020)',
    'Offense date matters. Before July 1, 2020, burglary was generally Category B, and the sealing law then in effect gave 10 years to any burglary. Current law gives 10 years to residential burglary and 5 years to other burglary (Ken answered 10 years for business burglary). Attorney reviews the court record (offense date and whether a home was entered) to set the wait.'),
-  ('Burglary of a Business, Structure or Motor Vehicle While Possessing a Firearm or Deadly Weapon (Offense Committed On or After July 1, 2020)',
-   'If a business was entered: Ken''s 10-year answer for business burglary may apply; attorney confirms. Structure or motor vehicle: 5 years.'),
   ('Grand Larceny — $3,500 or More (Offense Committed October 1, 2011 – June 30, 2020)',
    'Offense date matters: tiers and thresholds were different then. Attorney reviews the court record (amount and offense date) to set the class and wait.'),
   ('Grand Larceny — $650 to $3,499 (Offense Committed October 1, 2011 – June 30, 2020)',
@@ -97,8 +95,8 @@ insert into public.charge_special_cases (charge_name, staff_note) values
    'Offense date matters: tiers and thresholds were different then. Attorney reviews the court record (amount and offense date) to set the class and wait.'),
   ('Bad Check (Offense Committed Before October 1, 2011)',
    'Offense date matters: tiers and thresholds were different then. Attorney reviews the court record (amount and offense date) to set the class and wait.'),
-  ('Conspiracy — Category B Felony (Murder, Robbery, Sexual Assault, 1st/2nd-Degree Kidnapping or Arson, Involuntary Servitude, Buying or Selling a Person, Human or Sex Trafficking, Facilitating Sex Trafficking, or Identity Theft)',
-   'Ken''s answer (5 years) is used for every Category B conspiracy. Statute alone: 10 years if the conspiracy was to commit murder, robbery, sexual assault, kidnapping or sex trafficking (NRS 202.876 item 17); otherwise 5 years. Ken to confirm: a conspiracy to sex-traffic a child may count as a crime against a child (NRS 179D.0357(4), "an offense involving sex trafficking"), which cannot be sealed.'),
+  ('Conspiracy to Commit Sex Trafficking of a Child',
+   'Attorney decides whether this conspiracy counts as a crime against a child (NRS 179D.0357(4)). If it does, it cannot be sealed; if not, 5 years under Ken''s conspiracy answer.'),
   ('Possession of a Controlled Substance — Second Offense, Only 1 Prior Drug Conviction (Under 14 Grams Schedule I/II or Under 28 Grams Schedule III–V)',
    'Law changed July 1, 2020 (AB 236): before then, a second offense involving a Schedule V substance was a Category D felony (5 years). If the offense was earlier, the attorney sets the class and wait from the law in effect then. (Checked against the 2019 Statutes of Nevada: AB 236, ch. 633, sec. 137 — effective July 1, 2020.)'),
   ('Low-Level Possession of a Controlled Substance (14 to Under 28 Grams Schedule I/II, or 28 to Under 200 Grams Schedule III–V)',
@@ -179,5 +177,5 @@ revoke all on function public.leads_set_special_case() from public, anon, authen
 
 commit;
 
--- Check: should return 65
+-- Check: should return 64
 -- select count(*) from public.charge_special_cases;
