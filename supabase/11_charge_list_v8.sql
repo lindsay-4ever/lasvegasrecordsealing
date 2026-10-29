@@ -101,8 +101,6 @@ insert into public.charge_special_cases (charge_name, staff_note) values
    'Law changed July 1, 2020 (AB 236): before then possession tiers were different (often Category E, 2 years). If the offense was earlier, the attorney sets the class and wait from the law in effect then. (Checked against the 2019 Statutes of Nevada: AB 236, ch. 633, sec. 137 — effective July 1, 2020.)'),
   ('Mid-Level Possession of a Controlled Substance (28 to Under 42 Grams Schedule I/II, or 200 Grams or More Schedule III–V)',
    'Law changed July 1, 2020 (AB 236): before then possession tiers were different (often Category E, 2 years). If the offense was earlier, the attorney sets the class and wait from the law in effect then. (Checked against the 2019 Statutes of Nevada: AB 236, ch. 633, sec. 137 — effective July 1, 2020.)'),
-  ('Possession of Flunitrazepam or GHB',
-   'Attorney confirms whether the 3-year route in NRS 453.3365(1) applies to this offense (NRS 453.336(3)); if not, 5 years.'),
   ('Petit Larceny — Under $650 (Offense Committed October 1, 2011 – June 30, 2020)',
    'Offense date matters: tiers and thresholds were different then. Attorney reviews the court record (amount and offense date) to set the class and wait.'),
   ('Petit Larceny (Offense Committed Before October 1, 2011)',
@@ -171,5 +169,5 @@ revoke all on function public.leads_set_special_case() from public, anon, authen
 
 commit;
 
--- Check: should return 61
+-- Check: should return 60
 -- select count(*) from public.charge_special_cases;
