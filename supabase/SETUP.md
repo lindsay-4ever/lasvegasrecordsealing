@@ -71,5 +71,6 @@ Order matters. Do these in sequence so the form never stops saving leads:
 3. **Edge Functions → Secrets:** add `TURNSTILE_SECRET_KEY` = the secret key from Cloudflare → Turnstile → the widget.
 4. Publish the website (the form now posts to the function), submit a test lead, check it appears in `leads`, then delete it.
 5. **SQL Editor:** run `13_close_direct_inserts.sql`. After this the website can no longer write to `leads` directly; only the function can.
+6. **SQL Editor:** run `14_atomic_lead_submit.sql`, then paste the updated `functions/submit-lead/index.ts` into the function editor and deploy again. The lead and its rate-limit entry are then saved in one step (no double-counting when two requests arrive together, no penalty if saving fails), the visitor IP comes only from headers set by Supabase's network, and requests with no trusted IP skip the rate limit instead of sharing one bucket.
 
 Turnstile widget (Cloudflare → Application security → Turnstile): hostnames `lindsay-4ever.github.io` and `lasvegasrecordsealing.com`, mode Managed. The site key is in `eligibility.html` (`TURNSTILE_SITE_KEY`); the secret key goes only in Supabase.

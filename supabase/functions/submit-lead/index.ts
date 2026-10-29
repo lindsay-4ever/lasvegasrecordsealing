@@ -8,8 +8,15 @@
 //   4. Rate limit: at most 5 submissions per hour and 20 per day from the same
 //      connection. Only a scrambled (hashed) form of the IP address is kept,
 //      for 2 days; the address itself is never stored.
-// Then the lead is saved with the server's own key. The website itself can no
-// longer write to the database directly (see 13_close_direct_inserts.sql).
+// The lead and its rate-limit entry are saved together by lead_submit() in the
+// database (14_atomic_lead_submit.sql): checked one visitor at a time, and if
+// saving fails, the attempt doesn't count against the visitor. The website
+// itself can no longer write to the database directly
+// (13_close_direct_inserts.sql).
+//
+// Visitor IP: taken only from headers set by Supabase's own network, never
+// from the first X-Forwarded-For entry (which the browser can fake). If no
+// trusted IP is found, no rate limit is applied; the Turnstile check still is.
 //
 // Setup (Dashboard → Edge Functions):
 //   - Deploy a new function named  submit-lead  and paste this file.
@@ -125,6 +132,20 @@ async function sha256(text: string): Promise<string> {
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+// The visitor's IP as seen by Supabase's network. cf-connecting-ip is set by
+// Cloudflare in front of Supabase and replaces any value a browser sends.
+// Fallback: the LAST X-Forwarded-For entry (added by the proxy); the first
+// entries can be supplied by the browser, so they are never used.
+export function clientIp(h: Headers): { ip: string; source: string } {
+  const valid = (s: string) => /^[0-9a-fA-F:.]{3,45}$/.test(s);
+  const cf = (h.get("cf-connecting-ip") ?? "").trim();
+  if (valid(cf)) return { ip: cf, source: "cf-connecting-ip" };
+  const xff = (h.get("x-forwarded-for") ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+  const last = xff[xff.length - 1] ?? "";
+  if (valid(last)) return { ip: last, source: "x-forwarded-for (last)" };
+  return { ip: "", source: "none" };
+}
+
 function dbHeaders(key: string): Record<string, string> {
   const h: Record<string, string> = { "apikey": key, "Content-Type": "application/json" };
   if (!key.startsWith("sb_")) h["Authorization"] = `Bearer ${key}`; // legacy JWT keys
@@ -163,8 +184,7 @@ export async function handle(req: Request, env: (k: string) => string | undefine
   const token = typeof body.turnstileToken === "string" ? body.turnstileToken : "";
   if (!secret) { console.error("TURNSTILE_SECRET_KEY is not set"); return reply(500, { error: "server_error" }, origin); }
   if (!token || token.length > 2048) return reply(403, { error: "verification_failed" }, origin);
-  const ip = req.headers.get("cf-connecting-ip") ??
-    (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim();
+  const { ip, source } = clientIp(req.headers);
   try {
     const form = new URLSearchParams({ secret, response: token });
     if (ip) form.set("remoteip", ip);
@@ -185,29 +205,25 @@ export async function handle(req: Request, env: (k: string) => string | undefine
   const key = env("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !key) { console.error("Supabase URL or key missing"); return reply(500, { error: "server_error" }, origin); }
 
-  // 4. Rate limit (hashed IP; the Turnstile secret doubles as the salt)
+  // 4 + save: rate limit and insert in one database call (hashed IP; the
+  // Turnstile secret doubles as the salt). No trusted IP → no rate limit.
+  let keyHash: string | null = null;
+  if (ip) keyHash = await sha256(`${secret}|${ip}`);
+  else console.warn("No trusted client IP header; rate limit skipped for this request");
+  let result: unknown;
   try {
-    const keyHash = await sha256(`${secret}|${ip || "unknown"}`);
-    const r = await fetch(`${url}/rest/v1/rpc/lead_rate_ok`, {
-      method: "POST", headers: dbHeaders(key), body: JSON.stringify({ p_key_hash: keyHash }),
+    const r = await fetch(`${url}/rest/v1/rpc/lead_submit`, {
+      method: "POST", headers: dbHeaders(key),
+      body: JSON.stringify({ p_key_hash: keyHash, p_lead: lead }),
     });
-    if (!r.ok) throw new Error(`rate check ${r.status}: ${await r.text()}`);
-    if ((await r.json()) !== true) return reply(429, { error: "rate_limited" }, origin);
+    if (!r.ok) throw new Error(`lead_submit ${r.status}: ${(await r.text()).slice(0, 300)}`);
+    result = await r.json();
   } catch (e) {
-    console.error("Rate limit check failed:", String(e));
+    console.error("Saving the lead failed:", String(e), "ip source:", source);
     return reply(500, { error: "server_error" }, origin);
   }
-
-  // Save
-  const ins = await fetch(`${url}/rest/v1/leads`, {
-    method: "POST",
-    headers: { ...dbHeaders(key), "Prefer": "return=minimal" },
-    body: JSON.stringify(lead),
-  });
-  if (!ins.ok) {
-    console.error("Insert failed:", ins.status, (await ins.text()).slice(0, 300));
-    return reply(500, { error: "server_error" }, origin);
-  }
+  if (result === "rate_limited") return reply(429, { error: "rate_limited" }, origin);
+  if (result !== "ok") { console.error("Unexpected lead_submit result"); return reply(500, { error: "server_error" }, origin); }
   return reply(200, { ok: true }, origin);
 }
 
