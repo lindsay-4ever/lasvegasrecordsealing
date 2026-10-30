@@ -100,7 +100,7 @@ Rules, because these leads involve criminal records:
 Each lead records where the person came from: `source_channel` (paid_search, paid_social, paid_other, organic_search, organic_social, email, referral or direct), `source_paid` (true/false), the ad link's campaign labels (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`), the referring site's domain, the first page they landed on, and when they arrived. `js/lead-source.js` notes this in the visitor's browser (the most recent non-direct arrival, for up to 90 days) and the form sends it with the lead. It is stored only in this database and never sent to Google or Meta. Ad platforms' click IDs are used only to recognize a paid click and are not saved.
 
 Setup, in this order (any order is safe; the source just isn't saved until all three are done):
-1. **SQL Editor:** run `16_lead_source.sql` (adds the columns, updates `lead_submit()`, adds the `lead_sources_by_month` view).
+1. **SQL Editor:** run `24_lead_source.sql` (adds the columns, updates `lead_submit()`, adds the `lead_sources_by_month` view).
 2. **Edge Functions → submit-lead:** paste the updated `functions/submit-lead/index.ts` and deploy. The function cleans source fields instead of rejecting them, so an odd ad link can never cost a lead.
 3. Publish the website.
 
@@ -115,3 +115,8 @@ Tag your ads so their campaigns show up:
   (campaign IDs are the numbers shown in Google Ads).
 - **Anything else you share** (email, partner sites): add `utm_source=…&utm_medium=email` (or `referral`) and a `utm_campaign`.
 Name campaigns plainly: campaign names end up in this database, and Meta and Google already see them.
+
+## Fix: "not eligible yet" leads with special-case charges weren't saved
+Run `25_fix_waiting_special_case.sql` once. Since `11_charge_list_v8.sql`, a lead whose charge is on the special-case list (for example petit larceny or burglary) and who is still in their waiting period was refused by the database, and the visitor saw "we couldn't send your information". To see whether it happened: Edge Functions → submit-lead → Logs, search for "Saving the lead failed" with `special_case` in the message.
+
+Note on numbering: SQL files 16–23 are in the staff dashboard repo (lindsay-4ever/staff-dashboard); this repo continues at 24.
