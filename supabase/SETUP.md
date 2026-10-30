@@ -41,6 +41,8 @@ Supabase doesn't email you on its own. `supabase/functions/notify-new-lead/` sen
 4. **Database → Webhooks → Create**: table `leads`, event **Insert**, type **Supabase Edge Functions**, pick this function, method POST, and add the HTTP header `x-webhook-secret` = the same random string.
 5. Submit a test lead; the email should arrive within a minute. Delete the test row.
 
+**Link the email to the staff dashboard:** once the dashboard has its address, go to Edge Functions → notify-new-lead, paste the updated `functions/notify-new-lead/index.ts` and deploy, then add the secret `DASHBOARD_URL` = the dashboard's full address (starting with https://). Until that secret is set, the email links to Supabase's leads table.
+
 Later, once the business email exists: verify lasvegasrecordsealing.com in Resend (it gives DNS records to add at Network Solutions), then change `NOTIFY_FROM` to e.g. `leads@lasvegasrecordsealing.com` and add other recipients to `NOTIFY_TO`.
 
 ## Working the leads

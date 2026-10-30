@@ -19,7 +19,15 @@
 //                      "x-webhook-secret" header on the database webhook.
 // Turn OFF "Verify JWT" for this function; the webhook secret protects it.
 
-const DASHBOARD_URL = "https://supabase.com/dashboard/project/ubtmdxknrhdeqtixhyri/editor";
+// Where the email's link points. Set the DASHBOARD_URL secret to the staff
+// dashboard's address (https://…) once it's live; until then (or if the secret
+// isn't a valid https address) the link opens Supabase's leads table.
+const SUPABASE_TABLE_URL = "https://supabase.com/dashboard/project/ubtmdxknrhdeqtixhyri/editor";
+export function dashboardLink(env: (k: string) => string | undefined): { url: string; label: string } {
+  const dash = (env("DASHBOARD_URL") ?? "").trim();
+  if (/^https:\/\/[^\s"'<>]+$/.test(dash)) return { url: dash, label: "Open the staff dashboard" };
+  return { url: SUPABASE_TABLE_URL, label: "Open Supabase → Table Editor → leads" };
+}
 
 export async function handle(req: Request, env: (k: string) => string | undefined = (k) => Deno.env.get(k)): Promise<Response> {
   const secret = env("WEBHOOK_SECRET");
@@ -38,15 +46,16 @@ export async function handle(req: Request, env: (k: string) => string | undefine
   });
   const site = lead.site === "nevadasealingrecords" ? "Nevada Sealing Records" : "Las Vegas Record Sealing";
   const no = lead.lead_number != null ? ` #${Number(lead.lead_number)}` : "";
+  const link = dashboardLink(env);
 
   const text = `New lead${no}: a new eligibility form was submitted on ${site} at ${when} (Pacific time).\n\n` +
-    `Open Supabase to see it: Table Editor → leads.\n${DASHBOARD_URL}\n\n` +
+    `${link.label}:\n${link.url}\n\n` +
     `For privacy, this email doesn't include any details from the form.`;
   const html = `
     <div style="font-family:Arial,sans-serif;font-size:14px;color:#222;">
       <h2 style="font-family:Georgia,serif;color:#0d2b4e;margin:0 0 12px;">New lead${no} received</h2>
       <p>A new eligibility form was submitted on <b>${site}</b> at <b>${when}</b> (Pacific time).</p>
-      <p><a href="${DASHBOARD_URL}" style="color:#0d2b4e;font-weight:bold;">Open Supabase → Table Editor → leads</a></p>
+      <p><a href="${link.url}" style="color:#0d2b4e;font-weight:bold;">${link.label}</a></p>
       <p style="color:#666;font-size:12px;">For privacy, this email doesn't include any details from the form.</p>
     </div>`;
 
