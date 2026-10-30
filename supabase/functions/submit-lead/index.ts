@@ -3,7 +3,8 @@
 // Every submission is checked here, on the server, before anything is saved:
 //   1. Size limit (rejects anything over 32 KB).
 //   2. Field checks: required fields, lengths, allowed values, email and
-//      phone format, consent. Unknown fields are dropped.
+//      phone format, consent. Unknown fields are dropped. Lead source fields
+//      (paid vs organic, campaign) are cleaned instead of rejected.
 //   3. Cloudflare Turnstile: the visitor's browser must pass the bot check.
 //   4. Rate limit: at most 5 submissions per hour and 20 per day from the same
 //      connection. Only a scrambled (hashed) form of the IP address is kept,
@@ -40,6 +41,7 @@ const SITES = ["lasvegasrecordsealing", "nevadasealingrecords"];
 const CONTACT_METHODS = ["phone", "text", "email"];
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const SOURCE_CHANNELS = ["paid_search", "paid_social", "paid_other", "organic_search", "organic_social", "email", "referral", "direct"];
 
 type Lead = Record<string, unknown>;
 
@@ -79,6 +81,29 @@ function oneOf(v: unknown, field: string, allowed: string[], required = false): 
   const s = str(v, field, 40, { required });
   if (s !== null && !allowed.includes(s)) throw new Invalid(field);
   return s;
+}
+// Lead source fields are cleaned, never rejected: an odd ad link must never cost a lead.
+function soft(v: unknown, max: number): string | null {
+  if (typeof v !== "string") return null;
+  const s = v.trim().slice(0, max);
+  return s === "" ? null : s;
+}
+export function leadSource(input: Lead): Lead {
+  const channel = typeof input.source_channel === "string" && SOURCE_CHANNELS.includes(input.source_channel) ? input.source_channel : null;
+  const seen = soft(input.source_seen_at, 40);
+  const seenOk = seen !== null && !isNaN(Date.parse(seen)) && Date.parse(seen) <= Date.now() + 86_400_000;
+  return {
+    source_channel: channel,
+    source_paid: channel === null ? null : channel.startsWith("paid_"),
+    utm_source: soft(input.utm_source, 150),
+    utm_medium: soft(input.utm_medium, 150),
+    utm_campaign: soft(input.utm_campaign, 150),
+    utm_content: soft(input.utm_content, 150),
+    utm_term: soft(input.utm_term, 150),
+    referrer_domain: soft(input.referrer_domain, 253),
+    landing_page: soft(input.landing_page, 300),
+    source_seen_at: seenOk ? new Date(Date.parse(seen!)).toISOString() : null,
+  };
 }
 function isoDate(v: unknown, field: string): string | null {
   const s = str(v, field, 10);
@@ -125,6 +150,7 @@ export function validateLead(input: Lead): Lead {
   lead.answers = answers;
   lead.page_url = str(input.page_url, "page_url", 500);
   lead.user_agent = str(input.user_agent, "user_agent", 500);
+  Object.assign(lead, leadSource(input));   // where they came from (paid vs organic, campaign)
   return lead;
 }
 

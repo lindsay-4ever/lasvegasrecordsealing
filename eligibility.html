@@ -12,6 +12,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <script>if (window.top !== window.self) { document.documentElement.style.display = 'none'; try { window.top.location = window.self.location.href; } catch (e) {} }</script>
   <script src="/js/gtm.js"></script>
+  <script src="/js/lead-source.js"></script>
   <title>Free Nevada Record Sealing Eligibility Check</title>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   <meta name="description" content="Find out if you can seal your Nevada criminal record. Answer a few questions about your case — free, confidential, and no obligation." />
@@ -1131,6 +1132,8 @@ async function submitLead() {
     answers,
     page_url: location.href.slice(0, 500),
     user_agent: navigator.userAgent.slice(0, 500),
+    // Where they came from (ad campaign, search, social, direct). Saved only in our database.
+    ...(typeof window.lvrsLeadSource === 'function' ? window.lvrsLeadSource() : {}),
   };
 
   const token = turnstileToken();

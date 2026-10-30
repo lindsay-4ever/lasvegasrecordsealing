@@ -95,3 +95,23 @@ Rules, because these leads involve criminal records:
 - Meta retargeting: build audiences from page visits, `form_started` and `lead_submitted` only (for example, started but didn't finish). Ads must describe the service and never imply the viewer has a criminal record (Meta's personal attributes policy).
 - Keep Tag Manager access to as few people as possible: anyone with publish access can add tracking to the site.
 - After any Tag Manager change, submit a test lead and check every request the page sends (browser DevTools → Network) for names, phone numbers, emails, charges or results.
+
+## Lead source (paid vs organic)
+Each lead records where the person came from: `source_channel` (paid_search, paid_social, paid_other, organic_search, organic_social, email, referral or direct), `source_paid` (true/false), the ad link's campaign labels (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`), the referring site's domain, the first page they landed on, and when they arrived. `js/lead-source.js` notes this in the visitor's browser (the most recent non-direct arrival, for up to 90 days) and the form sends it with the lead. It is stored only in this database and never sent to Google or Meta. Ad platforms' click IDs are used only to recognize a paid click and are not saved.
+
+Setup, in this order (any order is safe; the source just isn't saved until all three are done):
+1. **SQL Editor:** run `16_lead_source.sql` (adds the columns, updates `lead_submit()`, adds the `lead_sources_by_month` view).
+2. **Edge Functions → submit-lead:** paste the updated `functions/submit-lead/index.ts` and deploy. The function cleans source fields instead of rejecting them, so an odd ad link can never cost a lead.
+3. Publish the website.
+
+See it: **Table Editor → leads** (the source columns are at the end) or **Table Editor → lead_sources_by_month** (lead counts per month: paid vs organic, channel, source and campaign).
+
+Tag your ads so their campaigns show up:
+- **Meta:** in each ad, under Destination → URL parameters, paste
+  `utm_source=meta&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}`
+  Untagged Meta ads look like organic Facebook/Instagram traffic.
+- **Google Ads:** keep auto-tagging on; Google ad clicks are recognized as paid search even without tags. To see campaigns, set Admin → Account settings → Tracking → Final URL suffix to
+  `utm_source=google&utm_medium=cpc&utm_campaign={campaignid}&utm_term={keyword}`
+  (campaign IDs are the numbers shown in Google Ads).
+- **Anything else you share** (email, partner sites): add `utm_source=…&utm_medium=email` (or `referral`) and a `utm_campaign`.
+Name campaigns plainly: campaign names end up in this database, and Meta and Google already see them.
