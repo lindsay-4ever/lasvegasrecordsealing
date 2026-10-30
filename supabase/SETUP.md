@@ -45,7 +45,7 @@ Later, once the business email exists: verify lasvegasrecordsealing.com in Resen
 
 ## Working the leads
 
-Staff use the dashboard at **lasvegasrecordsealing.com/staff** (see "Staff dashboard" below). In Table Editor you can also change `status` as you go (`new → contacted → qualified → retained`, or `not_eligible` / `closed`) and use `staff_notes` for call notes. Every raw form answer is kept in `answers`.
+In Table Editor, change `status` as you go (`new → contacted → qualified → retained`, or `not_eligible` / `closed`) and use `staff_notes` for call notes. Every raw form answer is kept in `answers`.
 
 ## Keeping it safe
 
@@ -60,21 +60,6 @@ Run `10_eligibility_reminder.sql` once. Every "waiting" lead gets `eligibility_r
 
 ## Lead numbers
 Run `15_lead_number.sql` once (delete test leads first if you want real leads to start at 1). Every lead gets `lead_number` 1, 2, 3, ... oldest first, and each new lead gets the next number automatically. It's the last column in Table Editor. The website can't set it, and the new-lead email shows it ("New lead #42"). A number can occasionally be skipped if a save fails; that's harmless.
-
-## Staff dashboard (lasvegasrecordsealing.com/staff)
-A private page where staff see leads and update their status and notes, without access to Supabase itself. Access rules are in `16_staff_dashboard.sql`: a person sees leads only if they signed in with an account you created, entered the 6-digit code from their authenticator app, and their email is in `staff_members`. Staff can change only status, staff notes and the eligibility reminder; every change records who made it (`updated_by`, `updated_at`). They can't delete leads or edit what the person entered.
-
-Setup (once):
-1. **SQL Editor:** run `15_lead_number.sql` (if not done yet), then `16_staff_dashboard.sql`.
-2. **Authentication → Sign In / Providers:** turn **off** "Allow new users to sign up", then save. Only accounts you create can sign in.
-3. **Authentication → Multi-Factor:** check that TOTP (authenticator app) is enabled. It is by default.
-4. **Authentication → Users → Add user → Create new user**, once per person: their email, a temporary password of 12+ characters, and tick **Auto Confirm User**.
-5. **Table Editor → staff_members → Insert row**, once per person: `email` (lowercase, the same as their login) and `name`.
-6. Send each person the link, their email and temporary password (by text or phone, not in the same email). On first sign-in they scan a QR code with Google Authenticator, Microsoft Authenticator or their password manager. They can change their password from the dashboard.
-
-Day to day:
-- **Remove someone:** delete their row in `staff_members` (access ends immediately), then delete their user in Authentication → Users.
-- **Forgot password, new phone or lost authenticator:** delete their user in Authentication → Users and create it again with a new temporary password (their `staff_members` row stays). On their next sign-in they set up the code again. Don't use "send password recovery": the dashboard doesn't handle those links.
 
 ## Website security settings
 Every page has a Content-Security-Policy tag near the top of its `<head>`. It only lets the site load its own files and only lets the form send data to this Supabase project, so injected or third-party code can't send visitors' answers anywhere else. If you add Google Tag Manager, GA4 or the Meta Pixel, add only their domains to that tag on every page, then rerun the network audit. Pages also hide themselves if another site tries to show them inside a frame. `_config.yml` keeps this `supabase/` folder off the public website (it is still visible in the GitHub repo while the repo is public).
