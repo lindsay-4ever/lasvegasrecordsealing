@@ -83,13 +83,15 @@ Turnstile widget (Cloudflare → Application security → Turnstile): hostnames 
 ## Tracking (Google Tag Manager, GA4, Meta Pixel)
 Every real page loads Tag Manager (container `GTM-57JJNV39`) from `js/gtm.js`. The two "page moved" redirect pages don't, so visits through them aren't counted twice. GA4, Google Ads and the Meta Pixel are set up inside Tag Manager, not in the site's code. Nothing is sent to Google or Meta until a Tag Manager version is published.
 
-The form tells Tag Manager about a lead with one event, `lead_submitted`, pushed only after the lead is saved. It carries no details (no name, contact info, charge, county or result) and is the same for every lead. The form's address and page title never change as people answer, so page views don't reveal answers either.
+The form sends Tag Manager two events, and neither carries any details (no answers, name, contact info, charge, county or result):
+- `form_started`: the first time someone answers a question and continues (once per visit to the page).
+- `lead_submitted`: only after the lead is saved, the same for every lead. The form's address and page title never change as people answer, so page views don't reveal answers either.
 
 Rules, because these leads involve criminal records:
-- Google and Meta get page views and `lead_submitted` only. Never add variables, parameters or event names that carry form answers, click text or form field values, and never make separate events or pages per result.
+- Google and Meta get page views, `form_started` and `lead_submitted` only. Never add variables, parameters or event names that carry form answers, click text or form field values, and never make separate events or pages per result.
 - Meta Pixel settings (Events Manager → the pixel → Settings): Automatic advanced matching **off**, automatic events / "track events automatically without code" **off**. In Tag Manager's Meta Pixel tag, also turn off automatic configuration.
 - Google: Enhanced conversions **off** in Google Ads, user-provided data collection **off** in GA4, and Enhanced measurement → Form interactions **off** in the GA4 data stream.
 - Google treats criminal records as a sensitive category: no Google remarketing lists, customer lists or lookalikes. Conversion tracking and search ads are fine.
-- Meta retargeting: build audiences from page visits and `lead_submitted` only. Ads must describe the service and never imply the viewer has a criminal record (Meta's personal attributes policy).
+- Meta retargeting: build audiences from page visits, `form_started` and `lead_submitted` only (for example, started but didn't finish). Ads must describe the service and never imply the viewer has a criminal record (Meta's personal attributes policy).
 - Keep Tag Manager access to as few people as possible: anyone with publish access can add tracking to the site.
 - After any Tag Manager change, submit a test lead and check every request the page sends (browser DevTools → Network) for names, phone numbers, emails, charges or results.

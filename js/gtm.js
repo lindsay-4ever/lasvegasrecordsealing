@@ -1,7 +1,8 @@
 // Google Tag Manager (container GTM-57JJNV39), loaded from this site's own file.
 //
 // Rules for what goes through Tag Manager (see supabase/SETUP.md, "Tracking"):
-// Google and Meta may receive page views and the "lead_submitted" event only.
+// Google and Meta may receive page views and the "form_started" and
+// "lead_submitted" events only.
 // Never send form answers: no names, contact details, charges, counties or
 // results, in event names, parameters or anything else.
 (function (w, d, id) {
