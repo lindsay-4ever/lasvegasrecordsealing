@@ -31,19 +31,17 @@ If the button shows an error instead, open the browser console (right-click → 
 - `404` / `relation "leads" does not exist` → step 1 wasn't run, or the Data API is switched off for the `public` schema (Project Settings → Data API).
 - `permission denied` / `row-level security` → re-run the SQL file.
 
-## 4. Get emailed when a lead comes in (optional, ~15 minutes)
+## 4. Get emailed when an eligible lead comes in (~15 minutes)
 
-Supabase doesn't email you on its own. `supabase/functions/notify-new-lead/` sends a short alert through Resend. The alert contains **no lead details** (no name, phone, email, charge or result), only the time and a link to Supabase, so nothing from the form passes through an email inbox.
+Supabase doesn't email you on its own. `supabase/functions/notify-new-lead/` sends a short alert through Resend, **only for leads the form found eligible now**. Leads that aren't eligible yet or need Ken's review show only in the staff dashboard. The alert says "New eligible lead detected (#N)" with a button to log in to the staff dashboard (https://staff-dashboard-6sv.pages.dev/). It contains **no lead details** (no name, phone, email, charge or answers), so nothing from the form passes through an email inbox.
 
-1. Sign up at resend.com with the email address that should get the alerts, and create an API key. No domain is needed yet: until you verify one, Resend can send from `onboarding@resend.dev`, but only to the address you signed up with.
-2. Supabase → **Edge Functions → Deploy a new function → Via editor**, paste `index.ts`, deploy. Turn **off** "Verify JWT" for this function (the webhook uses its own secret instead).
-3. **Edge Functions → Secrets**: add `RESEND_API_KEY`, `NOTIFY_TO` (your Resend sign-up email), `NOTIFY_FROM` = `Las Vegas Record Sealing <onboarding@resend.dev>`, and `WEBHOOK_SECRET` (any long random string, e.g. from a password generator).
-4. **Database → Webhooks → Create**: table `leads`, event **Insert**, type **Supabase Edge Functions**, pick this function, method POST, and add the HTTP header `x-webhook-secret` = the same random string.
-5. Submit a test lead; the email should arrive within a minute. Delete the test row.
+1. **Resend:** sign up at resend.com and create an API key. To send to anyone other than your own sign-up address (e.g. clarissa@kenstoverlaw.com), verify the domain: Resend → **Domains → Add domain** → `lasvegasrecordsealing.com`, add the DNS records it shows at Network Solutions, then click **Verify**. The records only cover sending from Resend; they don't change the site or any existing mailbox.
+2. Supabase → **Edge Functions → Deploy a new function → Via editor** (or open the existing `notify-new-lead`), paste `index.ts`, deploy. Turn **off** "Verify JWT" for this function (the webhook uses its own secret instead).
+3. **Edge Functions → Secrets**: `RESEND_API_KEY`, `NOTIFY_TO` = `clarissa@kenstoverlaw.com` (comma-separate to add more people), `NOTIFY_FROM` = `Las Vegas Record Sealing <leads@lasvegasrecordsealing.com>` (any name @ the verified domain; it doesn't need a mailbox), and `WEBHOOK_SECRET` (any long random string, e.g. from a password generator). `DASHBOARD_URL` is only needed if the dashboard moves to a new address.
+4. **Database → Webhooks → Create** (skip if it already exists): table `leads`, event **Insert**, type **Supabase Edge Functions**, pick this function, method POST, and add the HTTP header `x-webhook-secret` = the same random string.
+5. Submit a test lead that comes out eligible (e.g. charges dismissed); the email should arrive within a minute. Then delete the test rows.
 
-**Link the email to the staff dashboard:** once the dashboard has its address, go to Edge Functions → notify-new-lead, paste the updated `functions/notify-new-lead/index.ts` and deploy, then add the secret `DASHBOARD_URL` = the dashboard's full address (starting with https://). Until that secret is set, the email links to Supabase's leads table.
-
-Later, once the business email exists: verify lasvegasrecordsealing.com in Resend (it gives DNS records to add at Network Solutions), then change `NOTIFY_FROM` to e.g. `leads@lasvegasrecordsealing.com` and add other recipients to `NOTIFY_TO`.
+If no email arrives: Edge Functions → notify-new-lead → **Logs**. "not eligible now: no email" means the test lead wasn't an eligible-now result; a "Resend error" that mentions testing emails or your own email address means the domain isn't verified yet.
 
 ## Working the leads
 
