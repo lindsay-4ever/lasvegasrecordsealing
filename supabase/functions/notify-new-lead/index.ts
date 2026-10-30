@@ -2,7 +2,7 @@
 // Triggered by a Database Webhook on INSERT into public.leads.
 //
 // The email contains NO lead details: no name, phone, email, charge, result or
-// answers. It only says a new lead arrived and when. Staff open Supabase to see
+// answers. It only says a new lead arrived, its internal lead number, and when. Staff open Supabase to see
 // the lead. That way nothing from the form passes through an email provider or
 // inbox (Gmail / Google Workspace included).
 //
@@ -37,13 +37,14 @@ export async function handle(req: Request, env: (k: string) => string | undefine
     timeZone: "America/Los_Angeles", dateStyle: "medium", timeStyle: "short",
   });
   const site = lead.site === "nevadasealingrecords" ? "Nevada Sealing Records" : "Las Vegas Record Sealing";
+  const no = lead.lead_number != null ? ` #${Number(lead.lead_number)}` : "";
 
-  const text = `A new eligibility form was submitted on ${site} at ${when} (Pacific time).\n\n` +
+  const text = `New lead${no}: a new eligibility form was submitted on ${site} at ${when} (Pacific time).\n\n` +
     `Open Supabase to see it: Table Editor → leads.\n${DASHBOARD_URL}\n\n` +
     `For privacy, this email doesn't include any details from the form.`;
   const html = `
     <div style="font-family:Arial,sans-serif;font-size:14px;color:#222;">
-      <h2 style="font-family:Georgia,serif;color:#0d2b4e;margin:0 0 12px;">New lead received</h2>
+      <h2 style="font-family:Georgia,serif;color:#0d2b4e;margin:0 0 12px;">New lead${no} received</h2>
       <p>A new eligibility form was submitted on <b>${site}</b> at <b>${when}</b> (Pacific time).</p>
       <p><a href="${DASHBOARD_URL}" style="color:#0d2b4e;font-weight:bold;">Open Supabase → Table Editor → leads</a></p>
       <p style="color:#666;font-size:12px;">For privacy, this email doesn't include any details from the form.</p>
@@ -58,7 +59,7 @@ export async function handle(req: Request, env: (k: string) => string | undefine
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { "Authorization": `Bearer ${env("RESEND_API_KEY")}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: env("NOTIFY_FROM"), to, subject: `New lead: ${site}`, text, html }),
+    body: JSON.stringify({ from: env("NOTIFY_FROM"), to, subject: `New lead${no}: ${site}`, text, html }),
   });
   if (!res.ok) {
     console.error("Resend error", res.status, (await res.text()).slice(0, 300));

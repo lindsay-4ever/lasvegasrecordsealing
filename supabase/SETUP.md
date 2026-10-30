@@ -58,6 +58,9 @@ The table already accepts `site = 'nevadasealingrecords'`. Copy the same submit 
 ## Eligibility reminders (not eligible yet)
 Run `10_eligibility_reminder.sql` once. Every "waiting" lead gets `eligibility_reminder = true` automatically. **Table Editor → upcoming_eligibility** lists everyone eligible within the next 60 days, soonest first, plus anyone whose date has passed and is still "new". Change a lead's status to "contacted" to take them off the list, or untick `eligibility_reminder` if they ask not to be reminded.
 
+## Lead numbers
+Run `15_lead_number.sql` once (delete test leads first if you want real leads to start at 1). Every lead gets `lead_number` 1, 2, 3, ... oldest first, and each new lead gets the next number automatically. It's the last column in Table Editor. The website can't set it, and the new-lead email shows it ("New lead #42"). A number can occasionally be skipped if a save fails; that's harmless.
+
 ## Website security settings
 Every page has a Content-Security-Policy tag near the top of its `<head>`. It only lets the site load its own files and only lets the form send data to this Supabase project, so injected or third-party code can't send visitors' answers anywhere else. If you add Google Tag Manager, GA4 or the Meta Pixel, add only their domains to that tag on every page, then rerun the network audit. Pages also hide themselves if another site tries to show them inside a frame. `_config.yml` keeps this `supabase/` folder off the public website (it is still visible in the GitHub repo while the repo is public).
 
