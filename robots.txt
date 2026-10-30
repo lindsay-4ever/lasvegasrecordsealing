@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /supabase/
 
-Sitemap: https://www.lasvegasrecordsealing.com/sitemap.xml
+Sitemap: https://lasvegasrecordsealing.com/sitemap.xml
