@@ -271,6 +271,16 @@
     /* Accessibility: readable contrast for small text */
     .footer-founder, .footer-disclaimer { color: rgba(255,255,255,0.6) !important; }
     #stepName { color: #86691f !important; }  /* deeper gold for small text on light backgrounds */
+
+    /* Phones: less stacked side padding, so the form uses more of the screen width. */
+    @media (max-width: 480px) {
+      .wrap{ padding-left:12px; padding-right:12px; }
+      .card{ padding:22px 16px; }
+    }
+    /* Touch screens: 16px text in fields, so iPhones don't zoom in when a field is tapped. */
+    @media (pointer: coarse) {
+      select, input[type=date], input[type=month], input[type=text], input[type=email], input[type=tel], textarea, .charge-search-input{ font-size:16px; }
+    }
   </style>
 </head>
 <body>
