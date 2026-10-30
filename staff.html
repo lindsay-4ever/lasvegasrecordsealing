@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="color-scheme" content="light">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Staff-only page. Scripts may load only from this site; data may go only to our Supabase project.
+       Nothing on this page is secret: the database itself only returns leads to signed-in staff
+       who have entered their 6-digit code (see supabase/16_staff_dashboard.sql). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ubtmdxknrhdeqtixhyri.supabase.co; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <title>Staff · Las Vegas Record Sealing</title>
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <meta name="theme-color" content="#0d2b4e">
+  <style>
+    @font-face { font-family: 'EB Garamond'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/eb-garamond-500.woff2') format('woff2'); }
+    :root{
+      --navy:#0d2b4e; --navy-light:#173e6b; --gold:#c9a84c; --gold-light:#e6d5a3; --gold-bg:#f7f0dc;
+      --bg:#f5f4f0; --white:#fff; --text:#1c2b3a; --muted:#5b6b7b; --border:#dcdfe4; --row-hover:#f8f6f0;
+      --red:#9b2c2c; --red-bg:#fbeaea; --green:#1f6b45; --green-bg:#e5f3ea; --blue:#1d4f86; --blue-bg:#e6eef8;
+      --teal:#0f5f63; --teal-bg:#e1f1f1; --gray-bg:#eceef1;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; }
+    body{ background:var(--bg); color:var(--text); font-family:Arial, Helvetica, sans-serif; font-size:14.5px; line-height:1.45; }
+    [hidden]{ display:none !important; }
+    h1,h2,h3{ font-family:Georgia, 'Times New Roman', serif; color:var(--navy); margin:0; }
+    a{ color:var(--navy); }
+    button{ font:inherit; font-weight:bold; border-radius:8px; padding:9px 16px; cursor:pointer; border:1px solid transparent; }
+    button:disabled{ opacity:.55; cursor:default; }
+    .btn-primary{ background:var(--navy); color:#f5f4f0; }
+    .btn-primary:hover:not(:disabled){ background:var(--navy-light); }
+    .btn-ghost{ background:transparent; color:var(--navy); border-color:var(--border); }
+    .btn-ghost:hover:not(:disabled){ background:var(--white); }
+    .btn-link{ background:none; border:none; padding:0; color:var(--navy); text-decoration:underline; font-weight:normal; }
+    input, select, textarea{ font:inherit; color:var(--text); border:1px solid var(--border); border-radius:8px; padding:9px 11px; background:var(--white); width:100%; }
+    input:focus, select:focus, textarea:focus, button:focus-visible, .lead-row:focus-visible{ outline:2px solid var(--gold); outline-offset:1px; }
+    label.field{ display:block; font-weight:bold; font-size:13px; color:var(--muted); margin:14px 0 5px; }
+    .wordmark{ font-family:'EB Garamond', Georgia, serif; font-size:21px; color:var(--white); letter-spacing:.2px; }
+    .wordmark span{ color:var(--gold); font-family:Arial, sans-serif; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-left:10px; vertical-align:2px; }
+    .msg{ margin-top:12px; padding:10px 12px; border-radius:8px; font-size:13.5px; }
+    .msg.err{ background:var(--red-bg); color:var(--red); }
+    .msg.ok{ background:var(--green-bg); color:var(--green); }
+    .muted{ color:var(--muted); }
+    .small{ font-size:12.5px; }
+
+    /* ── Sign-in screens ── */
+    .auth-wrap{ min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; }
+    .auth-brand{ background:var(--navy); border-radius:12px 12px 0 0; padding:18px 24px; width:100%; max-width:420px; }
+    .auth-card{ background:var(--white); border:1px solid var(--border); border-top:none; border-radius:0 0 12px 12px; padding:24px; width:100%; max-width:420px; box-shadow:0 8px 24px rgba(13,43,78,.07); }
+    .auth-card h1{ font-size:22px; margin-bottom:6px; }
+    .auth-card p{ margin:0 0 4px; }
+    .auth-card .actions{ margin-top:18px; display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .code-input{ font-size:24px; letter-spacing:8px; text-align:center; font-family:'Courier New', monospace; }
+    .qr{ display:block; margin:14px auto 8px; width:190px; height:190px; border:1px solid var(--border); border-radius:8px; padding:6px; background:#fff; }
+    .secret{ font-family:'Courier New', monospace; font-size:13.5px; background:var(--bg); border-radius:6px; padding:8px 10px; word-break:break-all; text-align:center; }
+    ol.steps{ padding-left:20px; margin:10px 0 0; }
+    ol.steps li{ margin-bottom:6px; }
+
+    /* ── App ── */
+    .topbar{ background:var(--navy); color:var(--white); padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; position:sticky; top:0; z-index:5; }
+    .topbar .who{ display:flex; align-items:center; gap:14px; font-size:13px; flex-wrap:wrap; }
+    .topbar .who .email{ color:var(--gold-light); }
+    .topbar .btn-link{ color:var(--white); font-size:13px; }
+    main{ max-width:1280px; margin:0 auto; padding:20px 16px 48px; }
+    .toolbar{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+    .tabs{ display:flex; gap:6px; flex-wrap:wrap; margin-right:auto; }
+    .tab{ background:var(--white); color:var(--navy); border:1px solid var(--border); border-radius:999px; padding:7px 14px; font-size:13.5px; }
+    .tab .count{ display:inline-block; min-width:20px; margin-left:6px; padding:0 6px; border-radius:999px; background:var(--gray-bg); font-size:12px; text-align:center; }
+    .tab[aria-pressed="true"]{ background:var(--navy); color:#fff; border-color:var(--navy); }
+    .tab[aria-pressed="true"] .count{ background:var(--gold); color:var(--navy); }
+    .toolbar select{ width:auto; min-width:150px; }
+    .toolbar input[type=search]{ width:230px; }
+    .summary{ font-size:13px; color:var(--muted); margin:0 0 8px; }
+
+    .table-card{ background:var(--white); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    table{ width:100%; border-collapse:collapse; }
+    th{ text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); background:#fafaf8; padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap; }
+    td{ padding:11px 12px; border-bottom:1px solid #eef0f2; vertical-align:top; }
+    tr:last-child td{ border-bottom:none; }
+    .lead-row{ cursor:pointer; }
+    .lead-row:hover{ background:var(--row-hover); }
+    .lead-row.is-open{ background:var(--gold-bg); }
+    .num{ color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .name{ font-weight:bold; color:var(--navy); }
+    .sub{ display:block; font-size:12.5px; color:var(--muted); }
+    .chip{ display:inline-block; padding:2px 9px; border-radius:999px; font-size:12px; font-weight:bold; white-space:nowrap; }
+    .st-new{ background:var(--gold-bg); color:#7a5c12; }
+    .st-contacted{ background:var(--blue-bg); color:var(--blue); }
+    .st-qualified{ background:var(--teal-bg); color:var(--teal); }
+    .st-retained{ background:var(--green-bg); color:var(--green); }
+    .st-not_eligible{ background:var(--red-bg); color:var(--red); }
+    .st-closed{ background:var(--gray-bg); color:var(--muted); }
+    .flag{ display:inline-block; margin-left:6px; padding:1px 7px; border-radius:4px; font-size:11px; font-weight:bold; background:var(--red-bg); color:var(--red); vertical-align:1px; }
+    .empty{ padding:40px 16px; text-align:center; color:var(--muted); }
+
+    /* ── Lead detail panel ── */
+    .backdrop{ position:fixed; inset:0; background:rgba(13,43,78,.35); z-index:10; }
+    .drawer{ position:fixed; top:0; right:0; bottom:0; width:min(600px, 100%); background:var(--bg); z-index:11; display:flex; flex-direction:column; box-shadow:-10px 0 30px rgba(13,43,78,.18); }
+    .drawer-head{ background:var(--white); border-bottom:1px solid var(--border); padding:16px 20px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+    .drawer-head h2{ font-size:21px; }
+    .drawer-body{ overflow-y:auto; padding:16px 20px 28px; flex:1; }
+    .close-x{ background:none; border:1px solid var(--border); border-radius:8px; padding:6px 11px; color:var(--navy); }
+    .section{ background:var(--white); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:12px; }
+    .section h3{ font-size:15.5px; margin-bottom:8px; }
+    dl.kv{ display:grid; grid-template-columns:150px 1fr; gap:6px 12px; margin:0; }
+    dl.kv dt{ color:var(--muted); font-size:13px; }
+    dl.kv dd{ margin:0; word-break:break-word; }
+    .contact-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .contact-actions a{ text-decoration:none; font-weight:bold; font-size:13px; border:1px solid var(--border); border-radius:8px; padding:6px 12px; background:var(--white); }
+    .contact-actions a:hover{ background:var(--bg); }
+    .staff-section{ border-color:var(--gold); box-shadow:0 0 0 1px var(--gold-light) inset; }
+    .staff-section textarea{ min-height:110px; resize:vertical; }
+    .check{ display:flex; gap:8px; align-items:flex-start; margin-top:12px; font-size:13.5px; }
+    .check input{ width:auto; margin-top:3px; }
+    .save-row{ display:flex; gap:10px; align-items:center; margin-top:14px; flex-wrap:wrap; }
+    .unsaved{ background:var(--gold-bg); border:1px solid var(--gold-light); border-radius:8px; padding:10px 12px; margin-top:12px; font-size:13.5px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .ai-flag{ color:#2e7d32; font-style:italic; font-size:12.5px; display:block; margin-bottom:4px; }
+    .note-box{ white-space:pre-wrap; background:var(--bg); border-radius:8px; padding:10px 12px; }
+    details{ margin-top:4px; }
+    details summary{ cursor:pointer; color:var(--navy); font-weight:bold; font-size:13.5px; }
+    dialog{ border:none; border-radius:12px; padding:22px; width:min(400px, calc(100% - 32px)); box-shadow:0 20px 50px rgba(13,43,78,.25); }
+    dialog::backdrop{ background:rgba(13,43,78,.4); }
+
+    /* ── Phones: rows become cards ── */
+    @media (max-width: 760px){
+      .topbar{ padding:10px 16px; }
+      .toolbar input[type=search], .toolbar select{ width:100%; }
+      thead{ display:none; }
+      table, tbody, tr, td{ display:block; width:100%; }
+      .lead-row{ display:grid; grid-template-columns:1fr auto; gap:2px 10px; padding:12px 14px; border-bottom:1px solid #eef0f2; }
+      .lead-row td{ padding:0; border:none; }
+      .lead-row td.c-num{ grid-column:2; grid-row:1; text-align:right; }
+      .lead-row td.c-name{ grid-column:1; grid-row:1; }
+      .lead-row td.c-status{ grid-column:2; grid-row:2; text-align:right; }
+      .lead-row td.c-contact{ grid-column:1; grid-row:2; }
+      .lead-row td.c-charge, .lead-row td.c-result{ grid-column:1 / -1; font-size:13px; }
+      .lead-row td.c-when, .lead-row td.c-elig{ grid-column:1 / -1; font-size:12.5px; color:var(--muted); }
+      dl.kv{ grid-template-columns:1fr; gap:0 0; }
+      dl.kv dd{ margin-bottom:8px; }
+      .drawer-body{ padding:12px 14px 28px; }
+    }
+  </style>
+  <script src="js/supabase-2.117.3.js" defer></script>
+  <script src="js/staff.js" defer></script>
+</head>
+<body>
+
+  <!-- Loading -->
+  <section id="view-loading" class="auth-wrap">
+    <p class="muted">Loading…</p>
+  </section>
+
+  <!-- Sign in -->
+  <section id="view-login" class="auth-wrap" hidden>
+    <div class="auth-brand"><div class="wordmark">Las Vegas Record Sealing<span>Staff</span></div></div>
+    <form class="auth-card" id="loginForm" novalidate>
+      <h1>Sign in</h1>
+      <p class="muted small">For our office only.</p>
+      <label class="field" for="loginEmail">Email</label>
+      <input id="loginEmail" type="email" autocomplete="username" required>
+      <label class="field" for="loginPassword">Password</label>
+      <input id="loginPassword" type="password" autocomplete="current-password" required>
+      <div id="loginMsg" class="msg err" role="alert" hidden></div>
+      <div class="actions">
+        <button class="btn-primary" type="submit" id="loginBtn">Sign in</button>
+        <span class="muted small">Forgot your password? Ask Lindsay to reset it.</span>
+      </div>
+    </form>
+  </section>
+
+  <!-- First sign-in: set up the 6-digit code -->
+  <section id="view-enroll" class="auth-wrap" hidden>
+    <div class="auth-brand"><div class="wordmark">Las Vegas Record Sealing<span>Staff</span></div></div>
+    <form class="auth-card" id="enrollForm" novalidate>
+      <h1>Set up your sign-in code</h1>
+      <p class="muted small">One-time setup. Lead records are confidential, so each sign-in also needs a 6-digit code from your phone.</p>
+      <ol class="steps">
+        <li>On your phone, open an authenticator app: Google Authenticator, Microsoft Authenticator, or your password manager.</li>
+        <li>Add an account and scan this code:</li>
+      </ol>
+      <img id="enrollQr" class="qr" alt="QR code to scan with your authenticator app">
+      <p class="muted small" style="text-align:center;">Can't scan it? Enter this key instead:</p>
+      <div id="enrollSecret" class="secret"></div>
+      <ol class="steps" start="3"><li>Type the 6-digit code the app shows:</li></ol>
+      <input id="enrollCode" class="code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" aria-label="6-digit code">
+      <div id="enrollMsg" class="msg err" role="alert" hidden></div>
+      <div class="actions">
+        <button class="btn-primary" type="submit" id="enrollBtn">Turn on and continue</button>
+        <button class="btn-link" type="button" data-action="signout">Use a different account</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Every sign-in: enter the 6-digit code -->
+  <section id="view-code" class="auth-wrap" hidden>
+    <div class="auth-brand"><div class="wordmark">Las Vegas Record Sealing<span>Staff</span></div></div>
+    <form class="auth-card" id="codeForm" novalidate>
+      <h1>Enter your code</h1>
+      <p class="muted small">Open your authenticator app and type the 6-digit code for Las Vegas Record Sealing.</p>
+      <label class="field" for="codeInput">6-digit code</label>
+      <input id="codeInput" class="code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*">
+      <div id="codeMsg" class="msg err" role="alert" hidden></div>
+      <div class="actions">
+        <button class="btn-primary" type="submit" id="codeBtn">Continue</button>
+        <button class="btn-link" type="button" data-action="signout">Use a different account</button>
+      </div>
+      <p class="muted small" style="margin-top:14px;">New phone or lost your code? Ask Lindsay to reset your sign-in code.</p>
+    </form>
+  </section>
+
+  <!-- Signed in but not on the staff list (or setup unfinished) -->
+  <section id="view-denied" class="auth-wrap" hidden>
+    <div class="auth-brand"><div class="wordmark">Las Vegas Record Sealing<span>Staff</span></div></div>
+    <div class="auth-card">
+      <h1>No access yet</h1>
+      <p id="deniedText" style="margin-top:8px;"></p>
+      <div class="actions"><button class="btn-ghost" type="button" data-action="signout">Sign out</button></div>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="view-app" hidden>
+    <header class="topbar">
+      <div class="wordmark">Las Vegas Record Sealing<span>Leads</span></div>
+      <div class="who">
+        <span class="email" id="meEmail"></span>
+        <button class="btn-link" type="button" id="pwBtn">Change password</button>
+        <button class="btn-link" type="button" data-action="signout">Sign out</button>
+      </div>
+    </header>
+    <main>
+      <div class="toolbar">
+        <div class="tabs" role="group" aria-label="Show">
+          <button class="tab" type="button" data-tab="new" aria-pressed="true">New<span class="count" id="count-new">0</span></button>
+          <button class="tab" type="button" data-tab="soon" aria-pressed="false">Eligible soon<span class="count" id="count-soon">0</span></button>
+          <button class="tab" type="button" data-tab="special" aria-pressed="false">Special cases<span class="count" id="count-special">0</span></button>
+          <button class="tab" type="button" data-tab="all" aria-pressed="false">All<span class="count" id="count-all">0</span></button>
+        </div>
+        <select id="statusFilter" aria-label="Status">
+          <option value="">Any status</option>
+        </select>
+        <input id="search" type="search" placeholder="Search name, phone, email, #" aria-label="Search leads">
+        <button class="btn-ghost" type="button" id="refreshBtn">Refresh</button>
+      </div>
+      <p class="summary" id="summary"></p>
+      <div id="listMsg" class="msg err" role="alert" hidden></div>
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Submitted</th><th>Name</th><th>Contact</th><th>Charge</th><th>Result</th><th>Eligible</th><th>Status</th></tr>
+          </thead>
+          <tbody id="leadRows"></tbody>
+        </table>
+        <div class="empty" id="emptyState" hidden></div>
+      </div>
+    </main>
+  </section>
+
+  <!-- Lead detail -->
+  <div class="backdrop" id="backdrop" hidden></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
+    <div class="drawer-head">
+      <div>
+        <h2 id="drawerTitle"></h2>
+        <span class="sub" id="drawerSub"></span>
+      </div>
+      <button class="close-x" type="button" id="closeDrawer" aria-label="Close">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+
+  <!-- Change password -->
+  <dialog id="pwDialog">
+    <form id="pwForm" novalidate>
+      <h2 style="font-size:19px;">Change password</h2>
+      <label class="field" for="pwNew">New password (at least 12 characters)</label>
+      <input id="pwNew" type="password" autocomplete="new-password" minlength="12" required>
+      <label class="field" for="pwConfirm">Type it again</label>
+      <input id="pwConfirm" type="password" autocomplete="new-password" minlength="12" required>
+      <div id="pwMsg" class="msg" role="alert" hidden></div>
+      <div class="save-row">
+        <button class="btn-primary" type="submit" id="pwSave">Save password</button>
+        <button class="btn-ghost" type="button" id="pwCancel">Close</button>
+      </div>
+    </form>
+  </dialog>
+
+</body>
+</html>
