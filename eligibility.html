@@ -219,18 +219,25 @@
     .charge-search-wrap{ margin-bottom:8px; }
     .charge-search-input{ width:100%; padding:11px 14px; border:1.5px solid var(--border); border-radius:8px; font-size:14.5px; font-family:Arial, sans-serif; color:var(--text); background:var(--input-bg); }
     .charge-search-input:focus{ outline:none; border-color:var(--navy); }
-    .charge-search-results{ border:1px solid var(--border); border-radius:8px; margin-top:6px; overflow:hidden; display:none; max-height:340px; overflow-y:auto; background:var(--card); }
-    .search-result{ padding:11px 14px; cursor:pointer; border-bottom:1px solid var(--border); transition:background .12s; }
+    .charge-search-results{ border:1px solid var(--border); border-radius:8px; margin-top:6px; overflow:hidden; display:none; background:var(--card); }
+    .charge-search-results.expanded{ max-height:360px; overflow-y:auto; }
+    .search-result{ display:block; width:100%; text-align:left; font:inherit; color:inherit; background:var(--card); border:none; padding:11px 14px; cursor:pointer; border-bottom:1px solid var(--border); transition:background .12s; }
     .search-result:last-child{ border-bottom:none; }
-    .search-result:hover, .search-result.sr-selected{ background:var(--option-selected-bg); }
-    .sr-name{ font-size:14px; font-weight:bold; color:var(--text); margin-bottom:3px; }
+    .search-result:hover, .search-result:focus-visible, .search-result.sr-selected{ background:var(--option-selected-bg); outline:none; }
+    .show-more{ display:block; width:100%; text-align:left; font:inherit; font-size:13.5px; font-weight:bold; color:var(--navy); background:var(--card); border:none; padding:11px 14px; cursor:pointer; text-decoration:underline; }
+    .show-more:hover{ color:var(--gold); }
+    .search-more-note{ padding:10px 14px; color:var(--muted); font-size:12.5px; }
+    .sr-name{ display:block; font-size:14px; font-weight:bold; color:var(--text); margin-bottom:3px; }
     .sr-detail{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
     .sr-nrs{ font-size:12px; color:var(--muted); }
     .sr-badge{ font-size:11px; font-weight:bold; padding:2px 7px; border-radius:20px; }
     .sr-badge-yes{ background:var(--green-bg); color:var(--green-text); border:1px solid var(--green-border); }
     .sr-badge-no{ background:var(--red-bg); color:var(--red-text); border:1px solid var(--red-border); }
     .selected-charge-box{ background:var(--option-selected-bg); border:1.5px solid var(--navy); border-radius:8px; padding:12px 14px; margin-top:8px; }
-    .selected-charge-box .sc-label{ font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:4px; }
+    .selected-charge-box .sc-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px; }
+    .selected-charge-box .sc-label{ font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+    .sc-change{ font:inherit; font-size:13px; color:var(--navy); text-decoration:underline; background:none; border:none; padding:0; cursor:pointer; }
+    .sc-change:hover{ color:var(--gold); }
     .selected-charge-box .sc-name{ font-size:14.5px; font-weight:bold; color:var(--navy); }
     .selected-charge-box .sc-meta{ font-size:12.5px; color:var(--muted); margin-top:3px; }
     .search-no-results{ padding:12px 14px; color:var(--muted); font-size:13.5px; }
@@ -420,7 +427,7 @@
         <input type="text" id="chargeSearchFelony" class="charge-search-input" placeholder="E.g. robbery, burglary, NRS 205.060…" autocomplete="off" spellcheck="false">
         <div id="chargeResultsFelony" class="charge-search-results"></div>
         <div id="selectedChargeBoxFelony" class="selected-charge-box" style="display:none;">
-          <div class="sc-label">Selected charge</div>
+          <div class="sc-head"><div class="sc-label">Selected charge</div><button type="button" class="sc-change" data-charge-step="q4a">Change</button></div>
           <div class="sc-name" id="selectedChargeNameFelony"></div>
           <div class="sc-meta" id="selectedChargeMetaFelony"></div>
         </div>
@@ -446,7 +453,7 @@
         <input type="text" id="chargeSearchMisd" class="charge-search-input" placeholder="E.g. battery, DUI, trespassing, NRS 200.481…" autocomplete="off" spellcheck="false">
         <div id="chargeResultsMisd" class="charge-search-results"></div>
         <div id="selectedChargeBoxMisd" class="selected-charge-box" style="display:none;">
-          <div class="sc-label">Selected charge</div>
+          <div class="sc-head"><div class="sc-label">Selected charge</div><button type="button" class="sc-change" data-charge-step="q5a">Change</button></div>
           <div class="sc-name" id="selectedChargeNameMisd"></div>
           <div class="sc-meta" id="selectedChargeMetaMisd"></div>
         </div>
@@ -679,8 +686,8 @@ const PROGRESS = {
 const STEP_NAMES = {
   stop: 'Eligibility check', court_type: 'Court type', arrest: 'Arrest type',
   q2a: 'Charges filed', q2b: 'Charges filed', q2c: 'Conviction check',
-  q3a: 'Conviction', q3b: 'Conviction', q4a: 'Felony category', q4b: 'Charges dismissed',
-  q5a: 'Misdemeanor type', q5b: 'Charges dismissed', q6a: 'Conviction date', q6b: 'Charges dismissed',
+  q3a: 'Conviction', q3b: 'Conviction', q4a: 'Felony charge', q4b: 'Charges dismissed',
+  q5a: 'Misdemeanor charge', q5b: 'Charges dismissed', q6a: 'Conviction date', q6b: 'Charges dismissed',
   cant_find: 'Charge details', sentence_date: 'Sentence completed', contact: 'Your info', result: 'Your results',
 };
 
@@ -699,6 +706,7 @@ function goBack() {
   if (prev === 'q4a' || prev === 'q5a') {
     S.selectedCharge = null;
     S.cantFind = false;
+    resetChargeUI(prev);
   }
   currentStep = prev;
   render();
@@ -1303,70 +1311,127 @@ function parseWaitYears(waitStr) {
   return m ? parseInt(m[1]) : null;
 }
 
-function filterCharges(query) {
-  if (!query || query.length < 3) return [];
-  const q = query.toLowerCase();
-  return CHARGES.filter(c =>
-    c.n.toLowerCase().includes(q) || c.r.toLowerCase().includes(q)
-  ).slice(0, 20);
+// Each charge step only lists charges of its own level: the felony step shows
+// felonies, the misdemeanor step shows misdemeanors and gross misdemeanors.
+// Charges that can be either (e.g. "Cat E Felony or Gross Misdemeanor") show on both.
+const CHARGE_UI = {
+  q4a: { level: 'felony', input: 'chargeSearchFelony', results: 'chargeResultsFelony', box: 'selectedChargeBoxFelony', name: 'selectedChargeNameFelony', meta: 'selectedChargeMetaFelony' },
+  q5a: { level: 'misd',   input: 'chargeSearchMisd',   results: 'chargeResultsMisd',   box: 'selectedChargeBoxMisd',   name: 'selectedChargeNameMisd',   meta: 'selectedChargeMetaMisd' },
+};
+const RESULTS_SHOWN = 6;   // shown before "Show all"
+const RESULTS_MAX = 30;    // most shown after "Show all"
+
+function fitsLevel(c, level) {
+  if (/Varies|Same as/i.test(c.c)) return true;
+  return level === 'felony' ? /Felony/i.test(c.c) : /Misdemeanor/i.test(c.c);
+}
+const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const wordStart = (w) => new RegExp('(^|[^a-z0-9])' + escRe(w), 'i');
+
+// Every typed word must match the start of a word in the charge name or NRS
+// citation. Best matches first: name starts with the search, then the search as
+// a phrase in the name, then all words in the name, then citation matches.
+function filterCharges(query, level) {
+  const q = (query || '').trim().toLowerCase();
+  if (q.length < 3) return [];
+  const words = q.split(/\s+/).map(wordStart);
+  const phrase = wordStart(q);
+  const scored = [];
+  CHARGES.forEach((c, i) => {
+    if (level && !fitsLevel(c, level)) return;
+    const name = c.n.toLowerCase();
+    if (!words.every(r => r.test(name + ' ' + c.r.toLowerCase()))) return;
+    const score = name.startsWith(q) ? 0 : phrase.test(name) ? 1 : words.every(r => r.test(name)) ? 2 : 3;
+    scored.push({ c, score, i });
+  });
+  scored.sort((a, b) => a.score - b.score || a.c.n.length - b.c.n.length || a.i - b.i);
+  return scored.map(s => s.c);
 }
 
-function renderSearchResults(inputId, resultsId, boxId, nameId, metaId) {
-  const input = document.getElementById(inputId);
-  const container = document.getElementById(resultsId);
-  const box = document.getElementById(boxId);
+function renderSearchResults(step, showAll) {
+  const ui = CHARGE_UI[step];
+  const input = document.getElementById(ui.input);
+  const container = document.getElementById(ui.results);
   if (!input || !container) return;
 
   const query = input.value.trim();
-  const matches = filterCharges(query);
-
-  if (query.length < 3) { container.style.display = 'none'; return; }
+  if (query.length < 3) { container.style.display = 'none'; container.innerHTML = ''; return; }
+  const matches = filterCharges(query, ui.level);
 
   if (!matches.length) {
+    container.classList.remove('expanded');
     container.innerHTML = '<div class="search-no-results">No charges found — try different words, or use the "I can\'t find my charge" link below.</div>';
     container.style.display = 'block';
     return;
   }
 
-  container.innerHTML = matches.map(c => {
+  const shown = matches.slice(0, showAll ? RESULTS_MAX : RESULTS_SHOWN);
+  let html = shown.map(c => {
     const isSelected = S.selectedCharge && S.selectedCharge.n === c.n;
     const badge = c.s === 'NO'
       ? '<span class="sr-badge sr-badge-no">Cannot be sealed</span>'
       : `<span class="sr-badge sr-badge-yes">Wait: ${c.w}</span>`;
-    return `<div class="search-result${isSelected ? ' sr-selected' : ''}" data-charge="${encodeURIComponent(c.n)}"
-      data-nameid="${nameId}" data-metaid="${metaId}" data-boxid="${boxId}" data-resultsid="${resultsId}">
-      <div class="sr-name">${c.n}</div>
-      <div class="sr-detail"><span class="sr-nrs">${c.r}</span> ${badge}</div>
-    </div>`;
+    return `<button type="button" class="search-result${isSelected ? ' sr-selected' : ''}" data-charge-step="${step}" data-charge="${encodeURIComponent(c.n)}">
+      <span class="sr-name">${c.n}</span>
+      <span class="sr-detail"><span class="sr-nrs">${c.r}</span> ${badge}</span>
+    </button>`;
   }).join('');
+  if (!showAll && matches.length > RESULTS_SHOWN) {
+    html += `<button type="button" class="show-more" data-charge-step="${step}">Show all ${matches.length} matches</button>`;
+  } else if (matches.length > RESULTS_MAX) {
+    html += `<div class="search-more-note">Showing ${RESULTS_MAX} of ${matches.length}. Add another word to narrow it down.</div>`;
+  }
+  container.innerHTML = html;
+  container.classList.toggle('expanded', !!showAll && matches.length > RESULTS_SHOWN);
   container.style.display = 'block';
 }
 
-function selectCharge(chargeName, nameId, metaId, boxId, resultsId) {
+function selectCharge(step, chargeName) {
+  const ui = CHARGE_UI[step];
   const charge = CHARGES.find(c => c.n === chargeName);
-  if (!charge) return;
+  if (!ui || !charge) return;
   S.selectedCharge = charge;
   S.cantFind = false;
+  clearErrors();
 
-  const box = document.getElementById(boxId);
-  const nameEl = document.getElementById(nameId);
-  const metaEl = document.getElementById(metaId);
-  const resultsEl = document.getElementById(resultsId);
-
+  const nameEl = document.getElementById(ui.name);
+  const metaEl = document.getElementById(ui.meta);
   if (nameEl) nameEl.textContent = charge.n;
   if (metaEl) {
     const waitText = charge.s === 'NO' ? '⛔ Cannot be sealed under Nevada law' : `✓ Sealable — ${charge.w}${/\d/.test(charge.w) ? ' waiting period' : ''} | ${charge.c}`;
     metaEl.textContent = `${charge.r}  ·  ${waitText}`;
     metaEl.style.color = charge.s === 'NO' ? 'var(--red-text)' : 'var(--green-text)';
   }
-  if (box) box.style.display = 'block';
 
-  // Highlight selected result
-  if (resultsEl) {
-    resultsEl.querySelectorAll('.search-result').forEach(el => {
-      el.classList.toggle('sr-selected', decodeURIComponent(el.dataset.charge) === chargeName);
-    });
-  }
+  // Close the list and bring the selected charge and Continue button into view
+  // (blurring the search box also closes the phone keyboard).
+  document.getElementById(ui.results).style.display = 'none';
+  document.getElementById(ui.box).style.display = 'block';
+  document.getElementById(ui.input).blur();
+  requestAnimationFrame(() => {
+    const nav = document.querySelector('.nav-row');
+    if (nav) nav.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  });
+}
+
+// "Change" on the selected charge: reopen the list for the current search
+function changeCharge(step) {
+  const ui = CHARGE_UI[step];
+  S.selectedCharge = null;
+  S.cantFind = false;
+  document.getElementById(ui.box).style.display = 'none';
+  renderSearchResults(step);
+  const input = document.getElementById(ui.input);
+  try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+  input.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+// Coming back to a charge step: show the search again, nothing selected
+function resetChargeUI(step) {
+  const ui = CHARGE_UI[step];
+  if (!ui) return;
+  document.getElementById(ui.box).style.display = 'none';
+  renderSearchResults(step);
 }
 
 function setCantFind(step) {
@@ -1375,8 +1440,7 @@ function setCantFind(step) {
   S.pendingOutcome = 'contact';
   S.outcomeReason = 'unknown_category';
   // Clear any selected charge box
-  const boxId = step === 'q4a' ? 'selectedChargeBoxFelony' : 'selectedChargeBoxMisd';
-  const box = document.getElementById(boxId);
+  const box = document.getElementById(CHARGE_UI[step].box);
   if (box) box.style.display = 'none';
   // Route to description step before contact
   go('cant_find');
@@ -1437,23 +1501,22 @@ document.getElementById('nextBtn').addEventListener('click', advance);
 document.getElementById('backBtn').addEventListener('click', goBack);
 
 // Charge search — typing
-document.getElementById('chargeSearchFelony').addEventListener('input', function() {
-  S.selectedCharge = null; S.cantFind = false;
-  document.getElementById('selectedChargeBoxFelony').style.display = 'none';
-  renderSearchResults('chargeSearchFelony','chargeResultsFelony','selectedChargeBoxFelony','selectedChargeNameFelony','selectedChargeMetaFelony');
-});
-document.getElementById('chargeSearchMisd').addEventListener('input', function() {
-  S.selectedCharge = null; S.cantFind = false;
-  document.getElementById('selectedChargeBoxMisd').style.display = 'none';
-  renderSearchResults('chargeSearchMisd','chargeResultsMisd','selectedChargeBoxMisd','selectedChargeNameMisd','selectedChargeMetaMisd');
+Object.keys(CHARGE_UI).forEach(step => {
+  document.getElementById(CHARGE_UI[step].input).addEventListener('input', function() {
+    S.selectedCharge = null; S.cantFind = false;
+    document.getElementById(CHARGE_UI[step].box).style.display = 'none';
+    renderSearchResults(step);
+  });
 });
 
-// Charge search — clicking a result (event delegation)
+// Charge search — clicking a result, "Show all", or "Change" (event delegation)
 document.addEventListener('click', e => {
   const result = e.target.closest('.search-result');
-  if (!result) return;
-  const name = decodeURIComponent(result.dataset.charge);
-  selectCharge(name, result.dataset.nameid, result.dataset.metaid, result.dataset.boxid, result.dataset.resultsid);
+  if (result) { selectCharge(result.dataset.chargeStep, decodeURIComponent(result.dataset.charge)); return; }
+  const more = e.target.closest('.show-more');
+  if (more) { renderSearchResults(more.dataset.chargeStep, true); return; }
+  const change = e.target.closest('.sc-change');
+  if (change) changeCharge(change.dataset.chargeStep);
 });
 
 document.addEventListener('change', e => {
