@@ -1,14 +1,18 @@
-// Supabase Edge Function: emails the office when a new ELIGIBLE lead is saved.
+// Supabase Edge Function: emails the office when certain new leads are saved.
 // Triggered by a Database Webhook on INSERT into public.leads.
 //
-// Only leads the form found eligible now (outcome "packet") send an email.
-// Leads that aren't eligible yet or need Ken's review show only in the staff
+// Two kinds of lead send an email:
+//   - eligible now (outcome "packet"): "New eligible lead detected"
+//   - no sentence completion date (outcome_reason "unknown_date": the visitor
+//     checked "I'm not sure of the exact date", so the form couldn't work out
+//     the waiting period): "New lead detected — completion date needed"
+// Other leads (not eligible yet, or other reviews) show only in the staff
 // dashboard.
 //
 // The email contains NO lead details: no name, phone, email, charge or answers.
-// It says "New eligible lead detected", the internal lead number, and links to
-// the staff dashboard login. That way nothing from the form passes through an
-// email provider or inbox.
+// It gives the subject line, the internal lead number, and a link to the staff
+// dashboard login. That way nothing from the form passes through an email
+// provider or inbox.
 //
 // Secrets to set (Dashboard → Edge Functions → Secrets):
 //   RESEND_API_KEY   – from resend.com (free plan is plenty)
@@ -33,6 +37,13 @@ export function dashboardLink(env: (k: string) => string | undefined): string {
 // The form's "eligible now" result.
 export const isEligibleNow = (lead: Record<string, unknown>) => lead.outcome === "packet";
 
+// Which email (if any) a new lead gets.
+export function notifyKind(lead: Record<string, unknown>): "eligible" | "no_date" | null {
+  if (isEligibleNow(lead)) return "eligible";
+  if (lead.outcome_reason === "unknown_date") return "no_date";
+  return null;
+}
+
 export async function handle(req: Request, env: (k: string) => string | undefined = (k) => Deno.env.get(k)): Promise<Response> {
   const secret = env("WEBHOOK_SECRET");
   if (!secret || req.headers.get("x-webhook-secret") !== secret) {
@@ -44,18 +55,26 @@ export async function handle(req: Request, env: (k: string) => string | undefine
   const lead = payload?.record;
   if (payload?.type !== "INSERT" || !lead) return new Response("ignored", { status: 200 });
 
-  // Only eligible-now leads get an email.
-  if (!isEligibleNow(lead)) return new Response("not eligible now: no email", { status: 200 });
+  // Only eligible-now leads and leads with no completion date get an email.
+  const kind = notifyKind(lead);
+  if (!kind) return new Response("no email for this lead", { status: 200 });
 
   // Nothing the visitor typed: only the internal lead number.
   const no = lead.lead_number != null ? ` (#${Number(lead.lead_number)})` : "";
   const url = dashboardLink(env);
-  const subject = `New eligible lead detected${no}`;
+  const headline = kind === "eligible"
+    ? `New eligible lead detected${no}`
+    : `New lead detected — completion date needed${no}`;
+  const note = kind === "no_date"
+    ? "They didn't know their sentence completion date, so the form couldn't work out their waiting period."
+    : "";
+  const subject = headline;
 
-  const text = `New eligible lead detected${no}.\n\nLog in to the staff dashboard to see it:\n${url}`;
+  const text = `${headline}.\n\n${note ? note + "\n\n" : ""}Log in to the staff dashboard to see it:\n${url}`;
   const html = `
     <div style="font-family:Arial,sans-serif;font-size:14px;color:#222;">
-      <h2 style="font-family:Georgia,serif;color:#0d2b4e;margin:0 0 12px;">New eligible lead detected${no}</h2>
+      <h2 style="font-family:Georgia,serif;color:#0d2b4e;margin:0 0 12px;">${headline}</h2>
+      ${note ? `<p>${note}</p>` : ""}
       <p><a href="${url}" style="display:inline-block;background:#0d2b4e;color:#ffffff;font-weight:bold;text-decoration:none;padding:10px 18px;border-radius:6px;">Log in to the staff dashboard</a></p>
       <p style="color:#666;font-size:12px;">Or paste this address into your browser: ${url}</p>
     </div>`;
