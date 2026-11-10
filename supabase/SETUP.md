@@ -33,7 +33,7 @@ If the button shows an error instead, open the browser console (right-click → 
 
 ## 4. Get emailed when an eligible lead comes in (~15 minutes)
 
-Supabase doesn't email you on its own. `supabase/functions/notify-new-lead/` sends a short alert through Resend for two kinds of lead: **eligible now** ("New eligible lead detected (#N)") and **no sentence completion date** (the visitor checked "I'm not sure of the exact date", so the form couldn't work out the waiting period: "New lead detected — completion date needed (#N)"). Other leads (not eligible yet, other reviews) show only in the staff dashboard. Each alert has a button to log in to the staff dashboard (https://staff-dashboard-6sv.pages.dev/). It contains **no lead details** (no name, phone, email, charge or answers), so nothing from the form passes through an email inbox.
+Supabase doesn't email you on its own. `supabase/functions/notify-new-lead/` sends a short alert through Resend for two kinds of lead: **eligible now** ("New eligible lead detected (#N)") and **needs review**, meaning any lead whose result page said "Your case needs a personal review from our office" (no completion date, a special-case charge, "I can't find my charge", and so on): "New lead detected — needs review (#N)". Leads that aren't eligible yet show only in the staff dashboard. Each alert has a button to log in to the staff dashboard (https://staff-dashboard-6sv.pages.dev/). It contains **no lead details** (no name, phone, email, charge or answers), so nothing from the form passes through an email inbox.
 
 1. **Resend:** sign up at resend.com and create an API key. To send to anyone other than your own sign-up address (e.g. clarissa@kenstoverlaw.com), verify the domain: Resend → **Domains → Add domain** → `lasvegasrecordsealing.com`, add the DNS records it shows at Network Solutions, then click **Verify**. The records only cover sending from Resend; they don't change the site or any existing mailbox.
 2. Supabase → **Edge Functions → Deploy a new function → Via editor** (or open the existing `notify-new-lead`), paste `index.ts`, deploy. Turn **off** "Verify JWT" for this function (the webhook uses its own secret instead).
@@ -41,7 +41,7 @@ Supabase doesn't email you on its own. `supabase/functions/notify-new-lead/` sen
 4. **Database → Webhooks → Create** (skip if it already exists): table `leads`, event **Insert**, type **Supabase Edge Functions**, pick this function, method POST, and add the HTTP header `x-webhook-secret` = the same random string.
 5. Submit a test lead that comes out eligible (e.g. charges dismissed); the email should arrive within a minute. Then delete the test rows.
 
-If no email arrives: Edge Functions → notify-new-lead → **Logs**. "no email for this lead" means the test lead wasn't eligible now and had a completion date; a "Resend error" that mentions testing emails or your own email address means the domain isn't verified yet.
+If no email arrives: Edge Functions → notify-new-lead → **Logs**. "no email for this lead" means the test lead came out "not eligible yet"; a "Resend error" that mentions testing emails or your own email address means the domain isn't verified yet.
 
 ## Working the leads
 

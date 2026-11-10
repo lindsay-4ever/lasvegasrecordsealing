@@ -3,10 +3,10 @@
 //
 // Two kinds of lead send an email:
 //   - eligible now (outcome "packet"): "New eligible lead detected"
-//   - no sentence completion date (outcome_reason "unknown_date": the visitor
-//     checked "I'm not sure of the exact date", so the form couldn't work out
-//     the waiting period): "New lead detected — completion date needed"
-// Other leads (not eligible yet, or other reviews) show only in the staff
+//   - needs review (outcome "contact": the result page said "Your case needs a
+//     personal review from our office", e.g. no completion date, a special-case
+//     charge, "I can't find my charge"): "New lead detected — needs review"
+// Leads that aren't eligible yet (outcome "waiting") show only in the staff
 // dashboard.
 //
 // The email contains NO lead details: no name, phone, email, charge or answers.
@@ -38,9 +38,9 @@ export function dashboardLink(env: (k: string) => string | undefined): string {
 export const isEligibleNow = (lead: Record<string, unknown>) => lead.outcome === "packet";
 
 // Which email (if any) a new lead gets.
-export function notifyKind(lead: Record<string, unknown>): "eligible" | "no_date" | null {
+export function notifyKind(lead: Record<string, unknown>): "eligible" | "review" | null {
   if (isEligibleNow(lead)) return "eligible";
-  if (lead.outcome_reason === "unknown_date") return "no_date";
+  if (lead.outcome === "contact") return "review";
   return null;
 }
 
@@ -55,7 +55,7 @@ export async function handle(req: Request, env: (k: string) => string | undefine
   const lead = payload?.record;
   if (payload?.type !== "INSERT" || !lead) return new Response("ignored", { status: 200 });
 
-  // Only eligible-now leads and leads with no completion date get an email.
+  // Only eligible-now and needs-review leads get an email.
   const kind = notifyKind(lead);
   if (!kind) return new Response("no email for this lead", { status: 200 });
 
@@ -64,9 +64,9 @@ export async function handle(req: Request, env: (k: string) => string | undefine
   const url = dashboardLink(env);
   const headline = kind === "eligible"
     ? `New eligible lead detected${no}`
-    : `New lead detected — completion date needed${no}`;
-  const note = kind === "no_date"
-    ? "They didn't know their sentence completion date, so the form couldn't work out their waiting period."
+    : `New lead detected — needs review${no}`;
+  const note = kind === "review"
+    ? "The form couldn't confirm their eligibility online, so they were told our office will review their case."
     : "";
   const subject = headline;
 
