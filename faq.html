@@ -182,6 +182,15 @@
     .faq-item {
       border-bottom: 1px solid var(--border);
       padding: 1.5rem 0;
+      scroll-margin-top: 90px;   /* keep a linked question clear of the fixed nav bar */
+    }
+
+    /* A question opened by a link (e.g. faq#how-long from an ad sitelink) */
+    .faq-item:target {
+      background: var(--light-bg);
+      box-shadow: inset 4px 0 0 var(--gold);
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
 
     .faq-item h3 {
@@ -539,57 +548,57 @@
 <section class="faq">
   <div class="faq-inner">
 
-    <div class="faq-item">
+    <div class="faq-item" id="how-long">
       <h3>How long does the record sealing process take in Nevada?</h3>
       <p>From the time the Petition to Seal your record is filed to the receipt of a compliance letter from the Federal Bureau of Investigations, the process usually takes six to twelve months. In some cases, compliance has taken longer.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="waiting-period">
       <h3>How long do I have to wait to file a Petition?</h3>
       <p>If your case is dismissed with prejudice, or if you were acquitted, there is no waiting period. If your case was never filed or was dismissed without prejudice, you must wait until the statute of limitations has expired — one year for misdemeanors, typically three years for felonies.</p>
       <p style="margin-top:0.6rem;">If you were convicted, the waiting period depends on the charge. <a href="eligibility">Use our free eligibility check</a> to find your specific waiting period — whether your case was dismissed, never filed, or ended in a conviction.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="cannot-seal">
       <h3>What charges cannot be sealed?</h3>
       <p>If there are no convictions, all charges can be sealed. However, a Petition to Seal Records cannot be granted if you were convicted of: felony DUI, a felony sex offense, Home Invasion with the Use of a Deadly Weapon, Kidnapping of a Child, Sex Trafficking of a Child, or First Degree Murder with intent to commit Sexual Assault. <a href="eligibility">Fill out the form</a> for a free eligibility check on your specific record.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="expungement-vs-sealing">
       <h3>What's the difference between expungement and record sealing?</h3>
       <p>An expunged record is destroyed — it no longer exists. A sealed record still exists, but access to it is limited to certain agencies. Nevada does not have expungement, but a sealed record is removed from your state and federal criminal history, and the court's order permits you to say that you have never been arrested or convicted of any crime.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="gun-rights">
       <h3>Will sealing my record restore my gun rights?</h3>
       <p>If you have a conviction for any felony offense or a conviction for misdemeanor Domestic Battery, sealing your record will not restore your right to bear arms. However, if your arrest was for a felony and you were convicted of only a misdemeanor, or, if you were arrested for domestic battery and convicted of something less, your ability to purchase a firearm may be challenged. The arrest itself, even if the charges were dismissed, can preclude you from purchasing a firearm. If you fail a background check, your ability to purchase any firearm may be permanently impaired. To prevent this problem you <strong>MUST SEAL</strong> your arrest record before attempting to purchase a firearm.</p>
       <p>If you want your right to bear firearms restored after a felony conviction or a misdemeanor conviction for domestic battery, you will need to seek a Pardon. A sealed conviction will not restore your gun rights.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="criminal-history">
       <h3>Can my attorney obtain my criminal history for me?</h3>
       <p>No — lawyers cannot request your State criminal history record on your behalf. You must obtain it yourself. To file a Petition to Seal Records, the court requires a current, verified copy of your State criminal history attached to the Petition. If our eligibility review indicates you may qualify, our office will send you a <strong>Sealing Record Packet</strong> that walks you through exactly how to get both your State and Federal criminal records — including the fingerprints, money orders, and applications required.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="after-records">
       <h3>What happens after I submit my criminal history records?</h3>
       <p>Upon receipt of your State criminal history record, our office will provide a free legal consultation to determine exactly how to proceed. Once the legal fee is agreed upon, counsel will file the Petition in the appropriate court and represent you at all court appearances. After the court grants the Petition, we prepare the Order Sealing Record, disseminate certified copies to all agencies involved in your arrest, and monitor compliance until your record has been removed from state and federal databases.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="court">
       <h3>Do I have to appear in court?</h3>
       <p>In most cases your presence is not required — counsel represents you at all court appearances. Some jurisdictions do require the petitioner to be present at the hearing. We'll let you know in advance whether your attendance is needed.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="invisible">
       <h3>Will my record be completely invisible after sealing?</h3>
       <p>Sealed records are hidden from the general public, most employers, and landlords. Certain government agencies and law enforcement can still access them in limited circumstances. We'll explain exactly what sealing means for your specific situation.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="no-record">
       <h3>Can I say I have no criminal record after sealing?</h3>
       <p>In most cases, yes — Nevada law allows you to answer "no" on job applications and housing forms that ask about criminal history, once your record is sealed. There are limited exceptions, such as applications for certain government jobs or professional licenses. We'll walk you through exactly what you can and cannot say.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="employer">
       <h3>Will my employer find out I'm sealing my record?</h3>
       <p>No. The process is confidential. Your employer is not notified, and once the record is sealed, it will not appear on standard background checks employers use.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="nevada-expungement">
       <h3>Does Nevada have expungement?</h3>
       <p>Nevada does not have expungement, but record sealing achieves a very similar result. Your record is hidden from public view, most employers, and landlords — giving you a genuine fresh start. If you've been searching for "Nevada expungement," record sealing is what you're looking for.</p>
     </div>
-    <div class="faq-item">
+    <div class="faq-item" id="counties">
       <h3>Can I seal my record if I have cases in multiple Nevada counties?</h3>
       <p>Yes. We handle cases across all Nevada counties. Having records in multiple counties — including both Clark County and other Nevada counties — adds some complexity but is very manageable. We coordinate everything on your behalf.</p>
     </div>
