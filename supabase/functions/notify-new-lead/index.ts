@@ -62,9 +62,12 @@ export async function handle(req: Request, env: (k: string) => string | undefine
   // Nothing the visitor typed: only the internal lead number.
   const no = lead.lead_number != null ? ` (#${Number(lead.lead_number)})` : "";
   const url = dashboardLink(env);
-  const headline = kind === "eligible"
+  // Nevada Sealing Records leads say which site they came from; Las Vegas
+  // emails stay exactly as they were (no prefix).
+  const sitePrefix = lead.site === "nevadasealingrecords" ? "Nevada Sealing Records: " : "";
+  const headline = sitePrefix + (kind === "eligible"
     ? `New eligible lead detected${no}`
-    : `New lead detected — needs review${no}`;
+    : `New lead detected — needs review${no}`);
   const note = kind === "review"
     ? "The form couldn't confirm their eligibility online, so they were told our office will review their case."
     : "";

@@ -35,6 +35,8 @@ const ALLOWED_ORIGINS = [
   "https://lindsay-4ever.github.io",
   "https://lasvegasrecordsealing.com",
   "https://www.lasvegasrecordsealing.com",
+  "https://nevadasealingrecords.com",
+  "https://www.nevadasealingrecords.com",
 ];
 const MAX_BODY_BYTES = 32_000;
 const SITES = ["lasvegasrecordsealing", "nevadasealingrecords"];

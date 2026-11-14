@@ -53,7 +53,11 @@ These rows link real people to criminal-record details. Turn on two-factor login
 
 ## Reusing for nevadasealingrecords.com
 
-The table already accepts `site = 'nevadasealingrecords'`. Copy the same submit code into that site's form and set `LEAD_SITE = 'nevadasealingrecords'`.
+The table already accepts `site = 'nevadasealingrecords'`. The Nevada Sealing Records site (repo lindsay-4ever/sealmyrecordnevada) uses the same form with `LEAD_SITE = 'nevadasealingrecords'`, the same `submit-lead` function and the same Turnstile widget. What was added for it, without changing anything for Las Vegas:
+- `submit-lead`: `https://nevadasealingrecords.com` and `https://www.nevadasealingrecords.com` in `ALLOWED_ORIGINS`.
+- `notify-new-lead`: Nevada Sealing Records leads get "Nevada Sealing Records: " at the start of the email subject. Las Vegas emails have no prefix, as before.
+- Turnstile widget: hostnames `nevadasealingrecords.com` and `www.nevadasealingrecords.com` added (the Las Vegas ones stay).
+- Routing is unchanged: `default_case_for()` sends Clark County leads to Sean and every other county to Ken, whichever site they came from.
 
 ## Eligibility reminders (not eligible yet)
 Run `10_eligibility_reminder.sql` once. Every "waiting" lead gets `eligibility_reminder = true` automatically. **Table Editor → upcoming_eligibility** lists everyone eligible within the next 60 days, soonest first, plus anyone whose date has passed and is still "new". Change a lead's status to "contacted" to take them off the list, or untick `eligibility_reminder` if they ask not to be reminded.
@@ -78,7 +82,7 @@ Order matters. Do these in sequence so the form never stops saving leads:
 5. **SQL Editor:** run `13_close_direct_inserts.sql`. After this the website can no longer write to `leads` directly; only the function can.
 6. **SQL Editor:** run `14_atomic_lead_submit.sql`, then paste the updated `functions/submit-lead/index.ts` into the function editor and deploy again. The lead and its rate-limit entry are then saved in one step (no double-counting when two requests arrive together, no penalty if saving fails), the visitor IP comes only from headers set by Supabase's network, and requests with no trusted IP skip the rate limit instead of sharing one bucket.
 
-Turnstile widget (Cloudflare → Application security → Turnstile): hostnames `lindsay-4ever.github.io` and `lasvegasrecordsealing.com`, mode Managed. The site key is in `eligibility.html` (`TURNSTILE_SITE_KEY`); the secret key goes only in Supabase.
+Turnstile widget (Cloudflare → Application security → Turnstile): hostnames `lindsay-4ever.github.io`, `lasvegasrecordsealing.com`, `nevadasealingrecords.com` and `www.nevadasealingrecords.com`, mode Managed. The site key is in `eligibility.html` (`TURNSTILE_SITE_KEY`); the secret key goes only in Supabase.
 
 ## Tracking (Google Tag Manager, GA4, Meta Pixel)
 Every real page loads Tag Manager (container `GTM-57JJNV39`) from `js/gtm.js`. The two "page moved" redirect pages don't, so visits through them aren't counted twice. GA4, Google Ads and the Meta Pixel are set up inside Tag Manager, not in the site's code. Nothing is sent to Google or Meta until a Tag Manager version is published.
